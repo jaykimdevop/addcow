@@ -51,7 +51,40 @@ CLERK_WEBHOOK_SECRET=새로운_webhook_secret
 VERCEL_ACCESS_TOKEN=새로운_토큰
 ```
 
-### 2. Git 히스토리 정리 (선택사항)
+### 2. Gmail SMTP 설정 (이메일 기능)
+
+**이메일 서비스**: Gmail SMTP를 사용하여 무료로 이메일 발송
+
+#### Gmail 앱 비밀번호 생성 방법
+
+1. **2단계 인증 활성화** (필수)
+   - [Google 계정 보안](https://myaccount.google.com/security) 접속
+   - "2단계 인증" 활성화
+
+2. **앱 비밀번호 생성**
+   - [앱 비밀번호 페이지](https://myaccount.google.com/apppasswords) 접속
+   - 앱 선택: "메일"
+   - 기기 선택: "기타 (맞춤 이름)" → "Next.js App" 입력
+   - "생성" 클릭
+   - **16자리 비밀번호 복사** (공백 제외)
+
+3. **.env.local에 설정**
+```bash
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-gmail@gmail.com
+SMTP_PASSWORD=your-16-digit-app-password
+EMAIL_FROM=your-gmail@gmail.com
+EMAIL_FROM_NAME=Your App Name
+ADMIN_EMAIL=your-gmail@gmail.com
+```
+
+**주의사항**:
+- ⚠️ Gmail 계정의 실제 비밀번호가 아닌 **앱 비밀번호**를 사용하세요
+- ⚠️ 일일 발송 제한: 500통 (개인 계정) / 2,000통 (Google Workspace)
+- ⚠️ Clerk 관리자 계정과 동일한 Gmail 사용 권장
+
+### 3. Git 히스토리 정리 (선택사항)
 
 만약 이전에 `.env.local` 파일을 커밋한 적이 있다면, Git 히스토리에서 제거해야 합니다.
 
@@ -107,6 +140,13 @@ html: `<p>${sanitizedMessage}</p>`
 - `pnpm-lock.yaml`만 사용
 - `.gitignore`에 `package-lock.json` 추가
 
+### 4. 이메일 서비스 변경
+
+**변경 내용**:
+- Resend API → Gmail SMTP로 변경
+- `nodemailer` 패키지 사용
+- 무료로 이메일 발송 가능
+
 ---
 
 ## 🔒 보안 모범 사례
@@ -149,6 +189,11 @@ import { createServiceClient } from '@/lib/supabase/server';
 - **위험도**: 매우 높음
 - **사용처**: 서버 API 라우트, Webhook 검증
 - **주의**: 클라이언트에 노출 금지
+
+#### Gmail SMTP Password
+- **위험도**: 높음
+- **사용처**: 서버 사이드 이메일 발송
+- **주의**: 앱 비밀번호 사용, 실제 Gmail 비밀번호 사용 금지
 
 ### 3. Webhook 보안
 
@@ -224,6 +269,7 @@ export function middleware(request: NextRequest) {
 - [ ] 모든 API 키 재발급 완료
 - [ ] `.env.local` 파일이 `.gitignore`에 포함됨
 - [ ] Vercel 환경변수 설정 완료
+- [ ] Gmail 앱 비밀번호 생성 및 설정
 - [ ] Supabase RLS 정책 검토
 - [ ] Webhook Secret 검증 테스트
 - [ ] XSS 방지 코드 확인
@@ -235,8 +281,28 @@ export function middleware(request: NextRequest) {
 - [ ] 사용하지 않는 API 키 삭제
 - [ ] Supabase 액세스 로그 확인
 - [ ] Clerk 사용자 활동 모니터링
+- [ ] Gmail SMTP 발송 로그 확인
 - [ ] Vercel 배포 로그 확인
 - [ ] 의존성 보안 업데이트 확인 (`pnpm audit`)
+
+---
+
+## 📧 Gmail SMTP 문제 해결
+
+### 이메일 발송 실패 시
+
+1. **"Invalid login" 오류**
+   - 2단계 인증이 활성화되어 있는지 확인
+   - 앱 비밀번호를 올바르게 생성했는지 확인
+   - 앱 비밀번호에 공백이 없는지 확인
+
+2. **"Daily sending quota exceeded" 오류**
+   - 일일 500통 제한 초과
+   - Google Workspace 계정으로 업그레이드 (2,000통/일)
+
+3. **"SMTP connection failed" 오류**
+   - SMTP_HOST, SMTP_PORT 설정 확인
+   - 방화벽에서 587 포트 차단 여부 확인
 
 ---
 
@@ -247,6 +313,7 @@ export function middleware(request: NextRequest) {
 - [Supabase Security Best Practices](https://supabase.com/docs/guides/auth/row-level-security)
 - [Clerk Security](https://clerk.com/docs/security/overview)
 - [Next.js Security Headers](https://nextjs.org/docs/app/api-reference/next-config-js/headers)
+- [Gmail SMTP Settings](https://support.google.com/mail/answer/7126229)
 
 ### 보안 도구
 - [npm audit](https://docs.npmjs.com/cli/v8/commands/npm-audit) - 의존성 취약점 검사
@@ -261,6 +328,7 @@ export function middleware(request: NextRequest) {
 
 1. **즉시 조치**
    - 영향받는 API 키 즉시 재발급
+   - Gmail 앱 비밀번호 삭제 및 재생성
    - 로그 확인하여 악용 여부 점검
 
 2. **팀 공유**
@@ -276,3 +344,7 @@ export function middleware(request: NextRequest) {
 **마지막 업데이트**: 2025-12-17
 
 **작성자**: Claude Code (보안 수정 자동화)
+
+**변경 내역**:
+- 2025-12-17: Resend → Gmail SMTP로 이메일 서비스 변경
+- 2025-12-17: XSS 취약점 수정, 환경변수 보안 강화
