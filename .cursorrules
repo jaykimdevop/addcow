@@ -1,0 +1,63 @@
+# Faked Door 프로젝트 컨텍스트
+
+## 프로젝트 개요
+이 프로젝트는 faked door 테스트를 위한 랜딩 페이지와 관리자 대시보드를 제공합니다.
+
+## 기술 스택
+- **Framework**: Next.js 16.0.10 (App Router)
+- **React**: 19.2.2 (보안 패치 포함)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS 4
+- **Database**: Supabase (PostgreSQL)
+- **Authentication**: Clerk
+- **Analytics**: Google Analytics 4, Google Tag Manager
+- **Package Manager**: pnpm
+- **Linter/Formatter**: Biome (ESLint/Prettier 대신)
+- **Deployment**: Vercel
+- **Icons**: react-icons (일반 아이콘은 react-icons/lu 사용)
+
+## 프로젝트 구조
+```
+src/
+├── app/              # Next.js App Router
+│   ├── admin/        # 관리자 페이지 (인증 필요)
+│   └── api/          # API 라우트
+├── components/        # React 컴포넌트
+│   ├── ui/           # 공통 UI 컴포넌트
+│   └── admin/        # 관리자 전용 컴포넌트
+├── lib/              # 유틸리티 및 설정
+│   ├── supabase/     # Supabase 클라이언트
+│   ├── clerk.ts      # Clerk 설정
+│   └── analytics.ts  # GA4/GTM 헬퍼
+└── types/            # TypeScript 타입 정의
+```
+
+## 데이터베이스 스키마
+- `submissions`: 이메일 제출 데이터
+- `admin_users`: 관리자 권한 관리 (Clerk user_id와 연결)
+
+## 환경변수
+모든 환경변수는 `.env.local` 파일에 저장되며, `.env.local.example`을 참조하세요.
+절대 환경변수 파일을 커밋하지 마세요.
+
+## 코딩 컨벤션
+- TypeScript strict 모드 사용
+- Biome을 사용한 코드 포맷팅 및 린팅
+- 컴포넌트는 함수형 컴포넌트 사용
+- 모든 디자인은 다크/화이트 모드 대응
+- 아이콘은 react-icons/lu 사용 (일반적인 아이콘의 경우)
+
+## 보안 고려사항
+- Next.js 16.0.10 이상 사용 (CVE-2025-55184, CVE-2025-55183 패치)
+- React 19.2.2 이상 사용
+- Supabase RLS 정책으로 데이터 보호
+- Clerk로 관리자 인증 강제
+- 환경변수는 서버 사이드에서만 접근
+
+## 주요 기능
+1. 홈페이지: 이메일 수집 폼
+2. 관리자 대시보드: 통계 및 차트
+3. 제출 데이터 조회: 테이블, 검색, 필터
+4. 사용자 관리: 관리자 추가/수정/삭제
+5. 데이터 내보내기: CSV 다운로드
+
