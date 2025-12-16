@@ -1,22 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/clerk";
-import { createServiceClient } from "@/lib/supabase/server";
+import { requireAdminAuth } from "@/lib/clerk";
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await requireAuth();
-    const supabase = await createServiceClient();
-
-    // Check if user is admin
-    const { data: adminUser } = await supabase
-      .from("admin_users")
-      .select("role")
-      .eq("clerk_user_id", userId)
-      .single();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    const { supabase } = await requireAdminAuth();
 
     // Get all submissions that haven't had accounts created
     const { data: submissions, error: fetchError } = await supabase

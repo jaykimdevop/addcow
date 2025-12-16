@@ -19,6 +19,13 @@ export default async function AdminLayout({
     .single();
 
   if (error || !adminUser) {
+    // User is authenticated but not in admin_users table
+    console.error("Admin access denied:", {
+      userId,
+      error: error?.message,
+      adminUser,
+    });
+    // Redirect to home with a message
     redirect("/");
   }
 

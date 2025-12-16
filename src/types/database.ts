@@ -44,18 +44,36 @@ export interface Database {
           clerk_user_id: string;
           role: "admin" | "viewer";
           created_at: string;
+          first_name: string | null;
+          last_name: string | null;
+          email: string | null;
+          username: string | null;
+          image_url: string | null;
+          updated_at: string | null;
         };
         Insert: {
           id?: string;
           clerk_user_id: string;
           role: "admin" | "viewer";
           created_at?: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          email?: string | null;
+          username?: string | null;
+          image_url?: string | null;
+          updated_at?: string | null;
         };
         Update: {
           id?: string;
           clerk_user_id?: string;
           role?: "admin" | "viewer";
           created_at?: string;
+          first_name?: string | null;
+          last_name?: string | null;
+          email?: string | null;
+          username?: string | null;
+          image_url?: string | null;
+          updated_at?: string | null;
         };
       };
       webhook_events: {

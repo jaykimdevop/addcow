@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Faked Door - Coming Soon",
+  title: "ADDCOW - Coming Soon",
   description: "Join our waitlist to be notified when we launch",
 };
 

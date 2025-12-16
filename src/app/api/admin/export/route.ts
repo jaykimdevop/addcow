@@ -1,23 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/clerk";
-import { createServiceClient } from "@/lib/supabase/server";
+import { requireAdminAuth } from "@/lib/clerk";
 import { format } from "date-fns";
 
 export async function GET(request: NextRequest) {
   try {
-    const userId = await requireAuth();
-    const supabase = await createServiceClient();
-
-    // Check if user is admin
-    const { data: adminUser } = await supabase
-      .from("admin_users")
-      .select("role")
-      .eq("clerk_user_id", userId)
-      .single();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    const { supabase } = await requireAdminAuth();
 
     const searchParams = request.nextUrl.searchParams;
     const startDate = searchParams.get("start");

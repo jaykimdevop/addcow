@@ -74,7 +74,7 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
             </h2>
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {currentMode === "faked_door"
-                ? "Faked Door 모드: 이메일 수집 페이지가 표시됩니다"
+                ? "이메일 수집 모드: 이메일 수집 페이지가 표시됩니다"
                 : "MVP 모드: 제품 페이지가 표시됩니다"}
             </p>
           </div>
@@ -98,7 +98,7 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
                 : "bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600"
             } disabled:opacity-50 disabled:cursor-not-allowed`}
           >
-            Faked Door
+            이메일 수집
           </button>
 
           <button

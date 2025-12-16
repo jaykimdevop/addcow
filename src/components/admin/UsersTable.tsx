@@ -5,11 +5,20 @@ import { useRouter } from "next/navigation";
 import { format } from "date-fns";
 import { LuUserPlus, LuShield, LuEye, LuTrash2, LuLoader } from "react-icons/lu";
 
+interface ClerkUserInfo {
+  firstName: string | null;
+  lastName: string | null;
+  username: string | null;
+  emailAddress: string | null;
+  imageUrl: string | null;
+}
+
 interface AdminUser {
   id: string;
   clerk_user_id: string;
   role: "admin" | "viewer";
   created_at: string;
+  clerkUser: ClerkUserInfo | null;
 }
 
 interface UsersTableProps {
@@ -130,6 +139,12 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
             <thead className="bg-gray-50 dark:bg-gray-700/50">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  User
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                  Email
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Clerk User ID
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
@@ -146,17 +161,71 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
             <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
               {users.length === 0 ? (
                 <tr>
-                  <td colSpan={4} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
+                  <td colSpan={6} className="px-6 py-12 text-center text-gray-500 dark:text-gray-400">
                     No admin users found
                   </td>
                 </tr>
               ) : (
-                users.map((user) => (
+                users.map((user) => {
+                  const displayName =
+                    user.clerkUser?.firstName || user.clerkUser?.lastName
+                      ? `${user.clerkUser.firstName || ""} ${user.clerkUser.lastName || ""}`.trim()
+                      : user.clerkUser?.username || "Unknown User";
+                  
+                  return (
                   <tr
                     key={user.id}
                     className="hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
                   >
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900 dark:text-gray-100">
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="flex items-center gap-3">
+                          {user.clerkUser?.imageUrl ? (
+                            <img
+                              src={user.clerkUser.imageUrl}
+                              alt={displayName}
+                              className="w-10 h-10 rounded-full object-cover"
+                              onError={(e) => {
+                                // 이미지 로딩 실패 시 기본 아이콘 표시
+                                const target = e.target as HTMLImageElement;
+                                target.style.display = "none";
+                                const parent = target.parentElement;
+                                if (parent && !parent.querySelector(".fallback-icon")) {
+                                  const fallback = document.createElement("div");
+                                  fallback.className = "w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center fallback-icon";
+                                  fallback.innerHTML = '<svg class="w-5 h-5 text-gray-400 dark:text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>';
+                                  parent.appendChild(fallback);
+                                }
+                              }}
+                            />
+                          ) : (
+                            <div className="w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center">
+                              <LuUserPlus className="w-5 h-5 text-gray-400 dark:text-gray-500" />
+                            </div>
+                          )}
+                          <div>
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                              {displayName}
+                            </div>
+                            {user.clerkUser?.username && (
+                              <div className="text-xs text-gray-500 dark:text-gray-400">
+                                @{user.clerkUser.username}
+                              </div>
+                            )}
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 dark:text-gray-100">
+                        {user.clerkUser?.emailAddress ? (
+                          user.clerkUser.emailAddress
+                        ) : user.clerkUser === null ? (
+                          <span className="text-yellow-600 dark:text-yellow-400 italic" title="Clerk API에서 사용자 정보를 가져오지 못했습니다. 콘솔을 확인하세요.">
+                            정보 없음
+                          </span>
+                        ) : (
+                          <span className="text-gray-400 dark:text-gray-500 italic">No email</span>
+                        )}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600 dark:text-gray-400">
                       {user.clerk_user_id}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
@@ -192,7 +261,8 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                       </button>
                     </td>
                   </tr>
-                ))
+                  );
+                })
               )}
             </tbody>
           </table>

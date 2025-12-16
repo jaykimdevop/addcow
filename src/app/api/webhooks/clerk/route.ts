@@ -38,7 +38,11 @@ export async function POST(request: NextRequest) {
       type: string;
       data: {
         id: string;
-        email_addresses?: Array<{ email_address: string }>;
+        first_name?: string | null;
+        last_name?: string | null;
+        username?: string | null;
+        image_url?: string | null;
+        email_addresses?: Array<{ email_address: string; id: string }>;
         [key: string]: unknown;
       };
     };
@@ -53,7 +57,11 @@ export async function POST(request: NextRequest) {
         type: string;
         data: {
           id: string;
-          email_addresses?: Array<{ email_address: string }>;
+          first_name?: string | null;
+          last_name?: string | null;
+          username?: string | null;
+          image_url?: string | null;
+          email_addresses?: Array<{ email_address: string; id: string }>;
           [key: string]: unknown;
         };
       };
@@ -85,11 +93,18 @@ export async function POST(request: NextRequest) {
     switch (evt.type) {
       case "user.created": {
         // Auto-add new users to admin_users table with 'viewer' role
+        const primaryEmail = evt.data.email_addresses?.[0]?.email_address || null;
+        
         const { error: insertError } = await supabase
           .from("admin_users")
           .insert({
             clerk_user_id: evt.data.id,
             role: "viewer",
+            first_name: evt.data.first_name || null,
+            last_name: evt.data.last_name || null,
+            username: evt.data.username || null,
+            email: primaryEmail,
+            image_url: evt.data.image_url || null,
           });
 
         if (insertError) {
@@ -127,6 +142,52 @@ export async function POST(request: NextRequest) {
         });
 
         console.log(`User created: ${evt.data.id}`);
+        break;
+      }
+
+      case "user.updated": {
+        // Update user information when Clerk user is updated
+        const primaryEmail = evt.data.email_addresses?.[0]?.email_address || null;
+        
+        const { error: updateError } = await supabase
+          .from("admin_users")
+          .update({
+            first_name: evt.data.first_name || null,
+            last_name: evt.data.last_name || null,
+            username: evt.data.username || null,
+            email: primaryEmail,
+            image_url: evt.data.image_url || null,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("clerk_user_id", evt.data.id);
+
+        if (updateError) {
+          console.error("Failed to update admin user:", updateError);
+          // Mark event as processed even if it failed
+          await supabase
+            .from("webhook_events")
+            .update({ processed: true })
+            .eq("event_type", evt.type)
+            .eq("event_data->>id", evt.data.id)
+            .order("created_at", { ascending: false })
+            .limit(1);
+
+          return NextResponse.json(
+            { error: "Failed to update admin user" },
+            { status: 500 }
+          );
+        }
+
+        // Mark event as processed
+        await supabase
+          .from("webhook_events")
+          .update({ processed: true })
+          .eq("event_type", evt.type)
+          .eq("event_data->>id", evt.data.id)
+          .order("created_at", { ascending: false })
+          .limit(1);
+
+        console.log(`User updated: ${evt.data.id}`);
         break;
       }
 

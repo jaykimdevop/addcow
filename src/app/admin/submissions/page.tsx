@@ -9,13 +9,14 @@ interface SearchParams {
 export default async function SubmissionsPage({
   searchParams,
 }: {
-  searchParams: SearchParams;
+  searchParams: Promise<SearchParams>;
 }) {
   const supabase = await createServiceClient();
-  const page = parseInt(searchParams.page || "1", 10);
+  const params = await searchParams;
+  const page = parseInt(params.page || "1", 10);
   const pageSize = 20;
   const offset = (page - 1) * pageSize;
-  const search = searchParams.search || "";
+  const search = params.search || "";
 
   let query = supabase
     .from("submissions")

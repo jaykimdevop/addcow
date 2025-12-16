@@ -3,8 +3,16 @@ import { FeatureDemo } from "@/components/mvp/FeatureDemo";
 import { Pricing } from "@/components/mvp/Pricing";
 import { ContactForm } from "@/components/mvp/ContactForm";
 import { UserRegistration } from "@/components/mvp/UserRegistration";
+import { getSiteMode } from "@/lib/site-settings";
+import { redirect } from "next/navigation";
 
-export default function MVPPage() {
+export default async function AddCowPage() {
+  const siteMode = await getSiteMode();
+
+  if (siteMode !== "mvp") {
+    redirect("/");
+  }
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-900">
       {/* Hero Section */}
@@ -47,4 +55,3 @@ export default function MVPPage() {
     </div>
   );
 }
-

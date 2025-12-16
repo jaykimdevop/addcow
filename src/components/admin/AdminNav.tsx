@@ -34,7 +34,7 @@ export function AdminNav({ role }: AdminNavProps) {
               className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
             >
               <LuHouse className="w-5 h-5" />
-              <span className="font-semibold">Faked Door</span>
+              <span className="font-semibold">ADDCOW</span>
             </Link>
             <div className="flex items-center gap-1">
               {navItems.map((item) => {

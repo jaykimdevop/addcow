@@ -1,23 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/clerk";
-import { createServiceClient } from "@/lib/supabase/server";
+import { requireAdminAuth } from "@/lib/clerk";
 import { setSiteMode, getSiteMode } from "@/lib/site-settings";
 
 export async function GET() {
   try {
-    const userId = await requireAuth();
-    const supabase = await createServiceClient();
-
-    // Check if user is admin
-    const { data: adminUser } = await supabase
-      .from("admin_users")
-      .select("role")
-      .eq("clerk_user_id", userId)
-      .single();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    await requireAdminAuth();
 
     const mode = await getSiteMode();
 
@@ -33,19 +20,7 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
-    const userId = await requireAuth();
-    const supabase = await createServiceClient();
-
-    // Check if user is admin
-    const { data: adminUser } = await supabase
-      .from("admin_users")
-      .select("role")
-      .eq("clerk_user_id", userId)
-      .single();
-
-    if (!adminUser || adminUser.role !== "admin") {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 403 });
-    }
+    const { userId } = await requireAdminAuth();
 
     const { mode } = await request.json();
 
