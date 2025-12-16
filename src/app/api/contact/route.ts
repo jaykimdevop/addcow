@@ -40,7 +40,8 @@ export async function POST(request: NextRequest) {
     const sanitizedMessage = escapeHtml(message).replace(/\n/g, "<br>");
 
     // Send email notification to admin
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@yourdomain.com";
+    // Use SMTP_USER as admin email (same Gmail account used for sending)
+    const adminEmail = process.env.SMTP_USER || process.env.EMAIL_FROM || "admin@yourdomain.com";
     await sendEmail({
       to: adminEmail,
       subject: `새 문의: ${sanitizedName}`,
