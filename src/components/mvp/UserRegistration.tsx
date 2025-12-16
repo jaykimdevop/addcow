@@ -1,7 +1,7 @@
 "use client";
 
 import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
-import { LuLogIn, LuUserPlus, LuCheckCircle2 } from "react-icons/lu";
+import { LuLogIn, LuUserPlus, LuCheck } from "react-icons/lu";
 
 export function UserRegistration() {
   const { isSignedIn, user } = useUser();
@@ -9,7 +9,7 @@ export function UserRegistration() {
   if (isSignedIn) {
     return (
       <div className="p-8 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-center">
-        <LuCheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
+        <LuCheck className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
           로그인되었습니다!
         </h3>

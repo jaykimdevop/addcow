@@ -8,7 +8,7 @@ export async function DELETE(
 ) {
   try {
     const userId = await requireAuth();
-    const { id } = await params();
+    const { id } = await params;
     const supabase = await createServiceClient();
 
     // Check if user is admin

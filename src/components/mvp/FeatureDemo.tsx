@@ -1,4 +1,4 @@
-import { LuCheckCircle2 } from "react-icons/lu";
+import { LuCheck } from "react-icons/lu";
 
 export function FeatureDemo() {
   const features = [
@@ -31,7 +31,7 @@ export function FeatureDemo() {
                     key={index}
                     className="flex items-start gap-4 p-4 rounded-lg bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700"
                   >
-                    <LuCheckCircle2 className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+                    <LuCheck className="w-6 h-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
                     <div>
                       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                         {feature}

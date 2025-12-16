@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { LuToggleLeft, LuToggleRight, LuLoader2, LuAlertTriangle } from "react-icons/lu";
+import { LuToggleLeft, LuToggleRight, LuLoader, LuTriangleAlert } from "react-icons/lu";
 import type { SiteMode } from "@/lib/site-settings";
 
 interface SiteModeToggleProps {
@@ -119,7 +119,7 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
       {showConfirm && (
         <div className="p-6 rounded-lg bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800">
           <div className="flex items-start gap-4 mb-4">
-            <LuAlertTriangle className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
+            <LuTriangleAlert className="w-6 h-6 text-yellow-600 dark:text-yellow-400 flex-shrink-0 mt-0.5" />
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-yellow-900 dark:text-yellow-100 mb-2">
                 MVP로 전환하시겠습니까?
@@ -141,7 +141,7 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
               className="px-6 py-2 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-medium hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               {(isLoading || isTransitioning) && (
-                <LuLoader2 className="w-4 h-4 animate-spin" />
+                <LuLoader className="w-4 h-4 animate-spin" />
               )}
               확인 및 전환
             </button>
@@ -160,7 +160,7 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
       {isTransitioning && (
         <div className="p-4 rounded-lg bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800">
           <div className="flex items-center gap-3">
-            <LuLoader2 className="w-5 h-5 animate-spin text-blue-600 dark:text-blue-400" />
+            <LuLoader className="w-5 h-5 animate-spin text-blue-600 dark:text-blue-400" />
             <p className="text-sm text-blue-800 dark:text-blue-200">
               MVP 전환 중... 이메일 발송 및 계정 생성을 진행하고 있습니다.
             </p>

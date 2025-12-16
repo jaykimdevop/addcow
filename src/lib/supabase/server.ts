@@ -1,4 +1,5 @@
-import { createServerClient, createClient as createSupabaseClient } from "@supabase/supabase-js";
+import { createServerClient } from "@supabase/ssr";
+import { createClient as createSupabaseClient } from "@supabase/supabase-js";
 import { cookies } from "next/headers";
 import { auth } from "@clerk/nextjs/server";
 
@@ -69,12 +70,9 @@ export async function createClerkSupabaseClient() {
  * 모든 RLS 정책을 우회하는 관리자 전용 클라이언트
  */
 export async function createServiceClient() {
-  return createServerClient(
+  return createSupabaseClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!,
-    {
-      cookies: {},
-    }
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
   );
 }
 

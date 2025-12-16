@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
 
     // Generate CSV
     const headers = ["Email", "Submitted At", "ID"];
-    const rows = (submissions || []).map((submission) => [
+    const rows = (submissions || []).map((submission: any) => [
       submission.email,
       format(new Date(submission.created_at), "yyyy-MM-dd HH:mm:ss"),
       submission.id,
@@ -54,7 +54,7 @@ export async function GET(request: NextRequest) {
 
     const csvContent = [
       headers.join(","),
-      ...rows.map((row) => row.map((cell) => `"${cell}"`).join(",")),
+      ...rows.map((row: string[]) => row.map((cell: string) => `"${cell}"`).join(",")),
     ].join("\n");
 
     return new NextResponse(csvContent, {

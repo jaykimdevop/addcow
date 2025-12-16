@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { format } from "date-fns";
-import { LuUserPlus, LuShield, LuEye, LuTrash2, LuLoader2 } from "react-icons/lu";
+import { LuUserPlus, LuShield, LuEye, LuTrash2, LuLoader } from "react-icons/lu";
 
 interface AdminUser {
   id: string;
@@ -110,7 +110,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
           >
             {isAdding ? (
               <>
-                <LuLoader2 className="w-4 h-4 animate-spin" />
+                <LuLoader className="w-4 h-4 animate-spin" />
                 Adding...
               </>
             ) : (
@@ -185,7 +185,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                         className="p-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors disabled:opacity-50"
                       >
                         {isDeleting === user.id ? (
-                          <LuLoader2 className="w-4 h-4 animate-spin" />
+                          <LuLoader className="w-4 h-4 animate-spin" />
                         ) : (
                           <LuTrash2 className="w-4 h-4" />
                         )}

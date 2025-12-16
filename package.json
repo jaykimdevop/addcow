@@ -19,6 +19,7 @@
   "dependencies": {
     "@clerk/localizations": "^3.31.0",
     "@clerk/nextjs": "^6.36.3",
+    "@supabase/ssr": "^0.8.0",
     "@supabase/supabase-js": "^2.87.3",
     "date-fns": "^4.1.0",
     "next": "16.0.10",

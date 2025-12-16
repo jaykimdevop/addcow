@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { UserButton } from "@clerk/nextjs";
-import { LuLayoutDashboard, LuFileText, LuUsers, LuDownload, LuHome, LuSettings } from "react-icons/lu";
+import { LuLayoutDashboard, LuFileText, LuUsers, LuDownload, LuHouse, LuSettings } from "react-icons/lu";
 
 interface AdminNavProps {
   role: "admin" | "viewer";
@@ -33,7 +33,7 @@ export function AdminNav({ role }: AdminNavProps) {
               href="/"
               className="flex items-center gap-2 text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-gray-100"
             >
-              <LuHome className="w-5 h-5" />
+              <LuHouse className="w-5 h-5" />
               <span className="font-semibold">Faked Door</span>
             </Link>
             <div className="flex items-center gap-1">

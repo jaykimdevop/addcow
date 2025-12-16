@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LuDownload, LuLoader2, LuCalendar } from "react-icons/lu";
+import { LuDownload, LuLoader, LuCalendar } from "react-icons/lu";
 import { format, subDays } from "date-fns";
 
 export default function ExportPage() {
@@ -96,7 +96,7 @@ export default function ExportPage() {
           >
             {isExporting ? (
               <>
-                <LuLoader2 className="w-5 h-5 animate-spin" />
+                <LuLoader className="w-5 h-5 animate-spin" />
                 Exporting...
               </>
             ) : (

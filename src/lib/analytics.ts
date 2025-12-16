@@ -6,7 +6,7 @@ export const GTM_CONTAINER_ID = process.env.NEXT_PUBLIC_GTM_CONTAINER_ID;
 
 // GA4 pageview
 export const pageview = (url: string) => {
-  if (typeof window !== "undefined" && window.gtag) {
+  if (typeof window !== "undefined" && window.gtag && GA4_MEASUREMENT_ID) {
     window.gtag("config", GA4_MEASUREMENT_ID, {
       page_path: url,
     });

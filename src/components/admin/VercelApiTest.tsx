@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LuCheckCircle2, LuXCircle, LuLoader2, LuRefreshCw } from "react-icons/lu";
+import { LuCheck, LuX, LuLoader, LuRefreshCw } from "react-icons/lu";
 
 interface VercelTestResult {
 	success: boolean;
@@ -60,7 +60,7 @@ export function VercelApiTest() {
 				>
 					{isLoading ? (
 						<>
-							<LuLoader2 className="w-4 h-4 animate-spin" />
+							<LuLoader className="w-4 h-4 animate-spin" />
 							테스트 중...
 						</>
 					) : (
@@ -82,9 +82,9 @@ export function VercelApiTest() {
 				>
 					<div className="flex items-start gap-3">
 						{result.success ? (
-							<LuCheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+							<LuCheck className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
 						) : (
-							<LuXCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+							<LuX className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
 						)}
 						<div className="flex-1">
 							<h3

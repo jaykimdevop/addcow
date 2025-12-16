@@ -108,10 +108,6 @@ export interface Database {
   };
 }
 
-// Extend submissions type
-export interface Submission extends Database["public"]["Tables"]["submissions"]["Row"] {
-  notified?: boolean;
-  account_created?: boolean;
-  notified_at?: string | null;
-}
+// Submission type alias
+export type Submission = Database["public"]["Tables"]["submissions"]["Row"];
 

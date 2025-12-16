@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LuMail, LuCheckCircle2, LuLoader2 } from "react-icons/lu";
+import { LuMail, LuCheck, LuLoader } from "react-icons/lu";
 import { event } from "@/lib/analytics";
 
 export function EmailCollector() {
@@ -51,7 +51,7 @@ export function EmailCollector() {
   if (isSuccess) {
     return (
       <div className="flex flex-col items-center gap-4 p-8 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-        <LuCheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400" />
+        <LuCheck className="w-12 h-12 text-green-600 dark:text-green-400" />
         <div className="text-center">
           <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
             Thank you!
@@ -89,7 +89,7 @@ export function EmailCollector() {
         >
           {isLoading ? (
             <>
-              <LuLoader2 className="w-5 h-5 animate-spin" />
+              <LuLoader className="w-5 h-5 animate-spin" />
               Submitting...
             </>
           ) : (

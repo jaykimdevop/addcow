@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LuMail, LuMessageSquare, LuLoader2, LuCheckCircle2 } from "react-icons/lu";
+import { LuMail, LuMessageSquare, LuLoader, LuCheck } from "react-icons/lu";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -47,7 +47,7 @@ export function ContactForm() {
   if (isSuccess) {
     return (
       <div className="p-8 rounded-lg bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-center">
-        <LuCheckCircle2 className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
+        <LuCheck className="w-12 h-12 text-green-600 dark:text-green-400 mx-auto mb-4" />
         <h3 className="text-lg font-semibold text-green-900 dark:text-green-100 mb-2">
           메시지가 전송되었습니다!
         </h3>
@@ -137,7 +137,7 @@ export function ContactForm() {
       >
         {isLoading ? (
           <>
-            <LuLoader2 className="w-5 h-5 animate-spin" />
+            <LuLoader className="w-5 h-5 animate-spin" />
             전송 중...
           </>
         ) : (
