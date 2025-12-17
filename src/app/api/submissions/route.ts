@@ -50,6 +50,34 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // 대기자 등록 카운터 증가
+    try {
+      const { data: waitlistData } = await supabase
+        .from("site_settings")
+        .select("value")
+        .eq("key", "waitlist_data")
+        .single();
+
+      if (waitlistData) {
+        const currentData = waitlistData.value as {
+          start_date: string;
+          actual_registrations: number;
+        };
+        await supabase
+          .from("site_settings")
+          .update({
+            value: {
+              ...currentData,
+              actual_registrations: (currentData.actual_registrations || 0) + 1,
+            },
+          })
+          .eq("key", "waitlist_data");
+      }
+    } catch (error) {
+      console.error("Failed to update waitlist count:", error);
+      // 카운터 업데이트 실패해도 제출은 성공으로 처리
+    }
+
     return NextResponse.json(
       { message: "Email submitted successfully" },
       { status: 201 }
