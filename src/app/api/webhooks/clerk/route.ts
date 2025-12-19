@@ -3,18 +3,28 @@ import { Webhook } from "svix";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendWebhookNotification } from "@/lib/webhooks/notifications";
 
+// Validate required environment variables
+const REQUIRED_ENV_VARS = [
+  "CLERK_WEBHOOK_SECRET",
+  "NEXT_PUBLIC_SUPABASE_URL",
+  "SUPABASE_SERVICE_ROLE_KEY",
+] as const;
+
+function validateEnvVars() {
+  const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
+  if (missing.length > 0) {
+    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+  }
+}
+
+const isProduction = process.env.NODE_ENV === "production";
+
 export async function POST(request: NextRequest) {
   try {
-    // Get the webhook secret from environment variables
-    const webhookSecret = process.env.CLERK_WEBHOOK_SECRET;
+    // Validate environment variables
+    validateEnvVars();
 
-    if (!webhookSecret) {
-      console.error("CLERK_WEBHOOK_SECRET is not set");
-      return NextResponse.json(
-        { error: "Webhook secret not configured" },
-        { status: 500 }
-      );
-    }
+    const webhookSecret = process.env.CLERK_WEBHOOK_SECRET!;
 
     // Get the headers
     const svixId = request.headers.get("svix-id");
@@ -66,7 +76,8 @@ export async function POST(request: NextRequest) {
         };
       };
     } catch (err) {
-      console.error("Webhook verification failed:", err);
+      const errorMsg = err instanceof Error ? err.message : "Unknown error";
+      console.error("Webhook verification failed:", errorMsg);
       return NextResponse.json(
         { error: "Invalid signature" },
         { status: 400 }
@@ -76,18 +87,24 @@ export async function POST(request: NextRequest) {
     // Get Supabase client
     const supabase = await createServiceClient();
 
-    // Log the webhook event
-    const { error: logError } = await supabase
+    // Log the webhook event and get the ID
+    const { data: webhookEvent, error: logError } = await supabase
       .from("webhook_events")
       .insert({
         event_type: evt.type,
         event_data: evt.data,
         processed: false,
-      });
+      })
+      .select("id")
+      .single();
 
     if (logError) {
-      console.error("Failed to log webhook event:", logError);
+      const errorMsg = isProduction ? logError.message : logError;
+      console.error("Failed to log webhook event:", errorMsg);
+      // Continue processing even if logging fails
     }
+
+    const webhookEventId = webhookEvent?.id;
 
     // Handle different event types
     switch (evt.type) {
@@ -110,15 +127,15 @@ export async function POST(request: NextRequest) {
         if (insertError) {
           // If user already exists, that's okay (might be a duplicate webhook)
           if (insertError.code !== "23505") {
-            console.error("Failed to create admin user:", insertError);
+            const errorMsg = isProduction ? insertError.message : insertError;
+            console.error("Failed to create admin user:", errorMsg);
             // Mark event as processed even if it failed (to avoid retry loops)
-            await supabase
-              .from("webhook_events")
-              .update({ processed: true })
-              .eq("event_type", evt.type)
-              .eq("event_data->>id", evt.data.id)
-              .order("created_at", { ascending: false })
-              .limit(1);
+            if (webhookEventId) {
+              await supabase
+                .from("webhook_events")
+                .update({ processed: true })
+                .eq("id", webhookEventId);
+            }
 
             return NextResponse.json(
               { error: "Failed to create admin user" },
@@ -128,13 +145,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Mark event as processed
-        await supabase
-          .from("webhook_events")
-          .update({ processed: true })
-          .eq("event_type", evt.type)
-          .eq("event_data->>id", evt.data.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
+        if (webhookEventId) {
+          await supabase
+            .from("webhook_events")
+            .update({ processed: true })
+            .eq("id", webhookEventId);
+        }
 
         // Send notification
         await sendWebhookNotification("user.created", evt.data.id, {
@@ -162,15 +178,15 @@ export async function POST(request: NextRequest) {
           .eq("clerk_user_id", evt.data.id);
 
         if (updateError) {
-          console.error("Failed to update admin user:", updateError);
+          const errorMsg = isProduction ? updateError.message : updateError;
+          console.error("Failed to update admin user:", errorMsg);
           // Mark event as processed even if it failed
-          await supabase
-            .from("webhook_events")
-            .update({ processed: true })
-            .eq("event_type", evt.type)
-            .eq("event_data->>id", evt.data.id)
-            .order("created_at", { ascending: false })
-            .limit(1);
+          if (webhookEventId) {
+            await supabase
+              .from("webhook_events")
+              .update({ processed: true })
+              .eq("id", webhookEventId);
+          }
 
           return NextResponse.json(
             { error: "Failed to update admin user" },
@@ -179,13 +195,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Mark event as processed
-        await supabase
-          .from("webhook_events")
-          .update({ processed: true })
-          .eq("event_type", evt.type)
-          .eq("event_data->>id", evt.data.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
+        if (webhookEventId) {
+          await supabase
+            .from("webhook_events")
+            .update({ processed: true })
+            .eq("id", webhookEventId);
+        }
 
         console.log(`User updated: ${evt.data.id}`);
         break;
@@ -199,15 +214,15 @@ export async function POST(request: NextRequest) {
           .eq("clerk_user_id", evt.data.id);
 
         if (deleteError) {
-          console.error("Failed to delete admin user:", deleteError);
+          const errorMsg = isProduction ? deleteError.message : deleteError;
+          console.error("Failed to delete admin user:", errorMsg);
           // Mark event as processed even if it failed
-          await supabase
-            .from("webhook_events")
-            .update({ processed: true })
-            .eq("event_type", evt.type)
-            .eq("event_data->>id", evt.data.id)
-            .order("created_at", { ascending: false })
-            .limit(1);
+          if (webhookEventId) {
+            await supabase
+              .from("webhook_events")
+              .update({ processed: true })
+              .eq("id", webhookEventId);
+          }
 
           return NextResponse.json(
             { error: "Failed to delete admin user" },
@@ -216,13 +231,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Mark event as processed
-        await supabase
-          .from("webhook_events")
-          .update({ processed: true })
-          .eq("event_type", evt.type)
-          .eq("event_data->>id", evt.data.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
+        if (webhookEventId) {
+          await supabase
+            .from("webhook_events")
+            .update({ processed: true })
+            .eq("id", webhookEventId);
+        }
 
         // Send notification
         await sendWebhookNotification("user.deleted", evt.data.id, {
@@ -236,18 +250,22 @@ export async function POST(request: NextRequest) {
       default:
         console.log(`Unhandled event type: ${evt.type}`);
         // Mark as processed even if unhandled
-        await supabase
-          .from("webhook_events")
-          .update({ processed: true })
-          .eq("event_type", evt.type)
-          .eq("event_data->>id", evt.data.id)
-          .order("created_at", { ascending: false })
-          .limit(1);
+        if (webhookEventId) {
+          await supabase
+            .from("webhook_events")
+            .update({ processed: true })
+            .eq("id", webhookEventId);
+        }
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("Webhook processing error:", error);
+    const errorMsg = error instanceof Error ? error.message : "Unknown error";
+    console.error("Webhook processing error:", errorMsg);
+    // Log full error in development for debugging
+    if (!isProduction) {
+      console.error("Full error details:", error);
+    }
     return NextResponse.json(
       { error: "Internal server error" },
       { status: 500 }

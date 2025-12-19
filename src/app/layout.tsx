@@ -27,8 +27,19 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ClerkProvider localization={koKR}>
-      <html lang="ko" suppressHydrationWarning>
+    <ClerkProvider
+      localization={koKR}
+      appearance={{
+        layout: {
+          unsafe_disableDevelopmentModeWarnings: true,
+        },
+        variables: {
+          colorBackground: '#060010',
+          colorPrimary: '#9333ea',
+        },
+      }}
+    >
+      <html lang="ko" suppressHydrationWarning style={{ backgroundColor: '#060010' }}>
         <head>
           {/* Google Tag Manager */}
           {GTM_CONTAINER_ID && (

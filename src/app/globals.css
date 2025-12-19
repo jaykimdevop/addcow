@@ -31,8 +31,12 @@
   }
 }
 
+html {
+  background-color: #060010;
+}
+
 body {
-  background: var(--background);
+  background-color: #060010;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
@@ -85,6 +89,30 @@ input::placeholder {
   transform: translateX(-50%);
   border: 5px solid transparent;
   border-top-color: color-mix(in srgb, var(--primary) 25%, transparent);
+}
+
+/* ProfileMenu 애니메이션 */
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.profile-menu-slide-in {
+  animation: slideInLeft 0.3s ease-out;
+}
+
+.profile-menu-slide-in-delay-1 {
+  animation: slideInLeft 0.3s ease-out 0.1s both;
+}
+
+.profile-menu-slide-in-delay-2 {
+  animation: slideInLeft 0.3s ease-out 0.2s both;
 }
 
 /* Next.js 개발 도구 포털 위치 조정 */
