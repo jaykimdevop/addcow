@@ -149,9 +149,9 @@ export function ProfileSection() {
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           onClick={handleSignOut}
-          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-red-900/30 hover:bg-red-900/50 border border-red-800 transition-colors text-red-400 w-full text-sm"
+          className="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors text-left w-full text-sm"
         >
-          <LuLogOut size={14} />
+          <LuLogOut size={14} className="text-neutral-400" />
           <span>로그아웃</span>
         </motion.button>
       </SettingSection>

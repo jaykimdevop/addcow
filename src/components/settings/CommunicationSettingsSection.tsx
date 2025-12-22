@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { LuMessageSquare, LuVolume2, LuVideo, LuLayers, LuChevronDown } from "react-icons/lu";
+import { LuMessageSquare, LuVolume2, LuChevronDown } from "react-icons/lu";
 import { motion, AnimatePresence } from "motion/react";
 import { SettingSection } from "./SettingSection";
 
@@ -9,7 +9,7 @@ interface CommunicationSettingsSectionProps {
   delay?: number;
 }
 
-type CommunicationType = "text" | "audio" | "video" | "multimodal";
+type CommunicationType = "text" | "audio";
 
 export function CommunicationSettingsSection({
   delay = 0.2,
@@ -29,16 +29,6 @@ export function CommunicationSettingsSection({
       type: "audio" as CommunicationType,
       label: "오디오",
       icon: LuVolume2,
-    },
-    {
-      type: "video" as CommunicationType,
-      label: "비디오",
-      icon: LuVideo,
-    },
-    {
-      type: "multimodal" as CommunicationType,
-      label: "멀티모달",
-      icon: LuLayers,
     },
   ];
 
@@ -83,7 +73,7 @@ export function CommunicationSettingsSection({
         >
           <selectedOption.icon
             size={18}
-            className="text-purple-400"
+            className="text-white"
           />
           <span className="text-sm font-medium text-white flex-1">
             {selectedOption.label}
@@ -123,9 +113,7 @@ export function CommunicationSettingsSection({
                   >
                     <Icon
                       size={18}
-                      className={
-                        isSelected ? "text-purple-400" : "text-neutral-400"
-                      }
+                      className="text-white"
                     />
                     <span className="text-sm font-medium flex-1">
                       {option.label}
