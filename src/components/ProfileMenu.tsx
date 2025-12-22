@@ -86,7 +86,7 @@ export function ProfileMenu({ isOpen, onClose, onDockSettingsClick }: ProfileMen
                 className="w-full flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-neutral-800 transition-colors text-left"
               >
                 <VscAccount size={18} className="text-neutral-400" />
-                <span className="text-white text-sm">프로필 설정</span>
+                <span className="text-white text-sm">설정</span>
               </button>
 
               <button

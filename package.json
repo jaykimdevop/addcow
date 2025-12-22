@@ -23,6 +23,7 @@
     "@supabase/supabase-js": "^2.87.3",
     "date-fns": "^4.1.0",
     "framer-motion": "^12.23.26",
+    "googleapis": "^169.0.0",
     "motion": "^12.23.26",
     "next": "16.0.10",
     "nodemailer": "^6.9.16",
@@ -42,6 +43,7 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.0.10",
+    "shadcn": "^3.6.2",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

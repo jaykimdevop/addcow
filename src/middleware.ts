@@ -4,6 +4,8 @@ const isProtectedRoute = createRouteMatcher([
   "/admin(.*)",
   "/user-profile(.*)",
   "/home(.*)",
+  "/settings(.*)",
+  "/upload(.*)",
   "/node(.*)",
   "/asset(.*)",
   "/knowledge(.*)",

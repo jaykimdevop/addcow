@@ -5,6 +5,7 @@ import { koKR } from "@clerk/localizations";
 import Script from "next/script";
 import "./globals.css";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
+import { GlobalDock } from "@/components/GlobalDock";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -97,6 +98,7 @@ export default function RootLayout({
             </noscript>
           )}
           {children}
+          <GlobalDock />
         </body>
       </html>
     </ClerkProvider>

@@ -122,6 +122,35 @@ export interface Database {
           updated_by?: string | null;
         };
       };
+      google_drive_tokens: {
+        Row: {
+          id: string;
+          clerk_user_id: string;
+          access_token: string;
+          refresh_token: string;
+          token_expiry: string;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          clerk_user_id: string;
+          access_token: string;
+          refresh_token: string;
+          token_expiry: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          id?: string;
+          clerk_user_id?: string;
+          access_token?: string;
+          refresh_token?: string;
+          token_expiry?: string;
+          created_at?: string;
+          updated_at?: string;
+        };
+      };
     };
   };
 }

@@ -16,6 +16,7 @@ export type DockItemData = {
   label: React.ReactNode;
   onClick: () => void;
   className?: string;
+  isActive?: boolean;
 };
 
 export type DockProps = {
@@ -38,6 +39,7 @@ type DockItemProps = {
   distance: number;
   baseItemSize: number;
   magnification: number;
+  isActive?: boolean;
 };
 
 function DockItem({
@@ -48,7 +50,8 @@ function DockItem({
   spring,
   distance,
   magnification,
-  baseItemSize
+  baseItemSize,
+  isActive = false
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
@@ -81,7 +84,9 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={handleClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border-neutral-700 border-2 shadow-md cursor-pointer pointer-events-auto ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border-2 shadow-md cursor-pointer pointer-events-auto ${
+        isActive ? "border-purple-500" : "border-neutral-700"
+      } ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
@@ -184,6 +189,7 @@ export default function Dock({
             distance={distance}
             magnification={magnification}
             baseItemSize={baseItemSize}
+            isActive={item.isActive}
           >
             <DockIcon>{item.icon}</DockIcon>
             <DockLabel>{item.label}</DockLabel>

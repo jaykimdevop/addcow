@@ -1,17 +1,9 @@
 "use client";
 
-import { useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { EmailCollector } from "@/components/EmailCollector";
-import { ProfileMenu } from "@/components/profile/ProfileMenu";
-import { LuSparkles, LuFolderPlus } from "react-icons/lu";
-import { FcGoogle } from "react-icons/fc";
-import { VscHome, VscGitCommit, VscFiles, VscCloudUpload } from "react-icons/vsc";
+import { LuSparkles } from "react-icons/lu";
 import { FadeIn, SplitText } from "@/components/react-bits";
-import Dock from "@/components/Dock";
-import { ProfileMenu as UserProfileMenu } from "@/components/ProfileMenu";
-import { DockSettings } from "@/components/DockSettings";
 
 interface HeroSectionProps {
   isAdmin: boolean;
@@ -19,15 +11,7 @@ interface HeroSectionProps {
 }
 
 export function HeroSection({ isAdmin, showContent = true }: HeroSectionProps) {
-  const { isSignedIn, isLoaded, user } = useUser();
-  const router = useRouter();
-
-  // Dock settings state
-  const [panelHeight, setPanelHeight] = useState(68);
-  const [baseItemSize, setBaseItemSize] = useState(50);
-  const [magnification, setMagnification] = useState(70);
-  const [showDockSettings, setShowDockSettings] = useState(false);
-  const [showProfileMenu, setShowProfileMenu] = useState(false);
+  const { isSignedIn, isLoaded } = useUser();
 
   return (
     <div className="relative z-10 pointer-events-none h-full flex flex-col items-center justify-center -mt-4">
@@ -73,80 +57,7 @@ export function HeroSection({ isAdmin, showContent = true }: HeroSectionProps) {
         </>
       )}
 
-      {/* 로그인한 사용자 화면 */}
-      {isLoaded && isSignedIn && user && (
-        <>
-          <FadeIn delay={1.6} duration={0.8}>
-            <div className="fixed inset-0 flex items-center justify-center pointer-events-none">
-              <Dock
-                items={[
-                  {
-                    icon: <VscHome size={18} />,
-                    label: '홈',
-                    onClick: () => router.push('/home')
-                  },
-                  {
-                    icon: <VscGitCommit size={18} />,
-                    label: '노드',
-                    onClick: () => router.push('/node')
-                  },
-                  {
-                    icon: <VscFiles size={18} />,
-                    label: '작업물',
-                    onClick: () => router.push('/asset')
-                  },
-                  {
-                    icon: <VscCloudUpload size={18} />,
-                    label: '업로드',
-                    onClick: () => router.push('/knowledge')
-                  },
-                  {
-                    icon: user?.imageUrl ? (
-                      <img
-                        src={user.imageUrl}
-                        alt={user.fullName || "Profile"}
-                        className="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none p-[2px]"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold rounded-full pointer-events-none m-[2px]">
-                        <span className="text-[14px]">
-                          {user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || "U"}
-                        </span>
-                      </div>
-                    ),
-                    label: '프로필',
-                    onClick: () => router.push('/profile'),
-                    className: 'overflow-hidden'
-                  },
-                ]}
-                panelHeight={panelHeight}
-                baseItemSize={baseItemSize}
-                magnification={magnification}
-              />
-            </div>
-          </FadeIn>
-
-          <UserProfileMenu
-            isOpen={showProfileMenu}
-            onClose={() => setShowProfileMenu(false)}
-            onDockSettingsClick={() => {
-              setShowProfileMenu(false);
-              setShowDockSettings(true);
-            }}
-          />
-
-          <DockSettings
-            isOpen={showDockSettings}
-            onClose={() => setShowDockSettings(false)}
-            panelHeight={panelHeight}
-            baseItemSize={baseItemSize}
-            magnification={magnification}
-            onPanelHeightChange={setPanelHeight}
-            onBaseItemSizeChange={setBaseItemSize}
-            onMagnificationChange={setMagnification}
-          />
-        </>
-      )}
+      {/* 로그인한 사용자 화면 - Dock은 GlobalDock에서 처리 */}
     </div>
   );
 }
