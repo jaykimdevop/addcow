@@ -1,10 +1,10 @@
 "use client";
 
-import { Orb } from "@/components/react-bits";
-import { HeroSection } from "@/components/HeroSection";
 import { useUser } from "@clerk/nextjs";
-import { motion, AnimatePresence } from "motion/react";
-import { useState, useEffect, useRef } from "react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { HeroSection } from "@/components/HeroSection";
+import { Orb } from "@/components/react-bits";
 
 interface HomeClientProps {
   isAdmin: boolean;
@@ -52,7 +52,10 @@ export function HomeClient({ isAdmin }: HomeClientProps) {
   }, [isLoaded, isSignedIn, orbAnimating]);
 
   return (
-    <div className="h-screen overflow-hidden relative" style={{ backgroundColor: '#060010' }}>
+    <div
+      className="h-screen overflow-hidden relative"
+      style={{ backgroundColor: "#060010" }}
+    >
       {!isLoaded && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <motion.div
@@ -75,18 +78,22 @@ export function HomeClient({ isAdmin }: HomeClientProps) {
           <motion.div
             className="fixed inset-0 z-0 w-full h-full"
             initial={{ scale: 1, opacity: 1 }}
-            animate={orbAnimating ? {
-              scale: 3,
-              opacity: 0,
-              rotate: 360
-            } : {
-              scale: 1,
-              opacity: 1
-            }}
+            animate={
+              orbAnimating
+                ? {
+                    scale: 3,
+                    opacity: 0,
+                    rotate: 360,
+                  }
+                : {
+                    scale: 1,
+                    opacity: 1,
+                  }
+            }
             exit={{ opacity: 0 }}
             transition={{
               duration: 1.5,
-              ease: "easeInOut"
+              ease: "easeInOut",
             }}
           >
             <Orb

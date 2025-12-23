@@ -1,9 +1,9 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
-import { VscAccount, VscSignOut, VscSettings } from "react-icons/vsc";
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
+import { VscAccount, VscSettings, VscSignOut } from "react-icons/vsc";
 
 interface ProfileMenuProps {
   isOpen: boolean;
@@ -11,7 +11,11 @@ interface ProfileMenuProps {
   onDockSettingsClick: () => void;
 }
 
-export function ProfileMenu({ isOpen, onClose, onDockSettingsClick }: ProfileMenuProps) {
+export function ProfileMenu({
+  isOpen,
+  onClose,
+  onDockSettingsClick,
+}: ProfileMenuProps) {
   const { user } = useUser();
   const { signOut } = useClerk();
   const router = useRouter();
@@ -52,7 +56,9 @@ export function ProfileMenu({ isOpen, onClose, onDockSettingsClick }: ProfileMen
                   />
                 ) : (
                   <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold text-lg">
-                    {user?.firstName?.[0] || user?.emailAddresses?.[0]?.emailAddress?.[0] || "U"}
+                    {user?.firstName?.[0] ||
+                      user?.emailAddresses?.[0]?.emailAddress?.[0] ||
+                      "U"}
                   </div>
                 )}
                 <div className="flex-1 min-w-0">

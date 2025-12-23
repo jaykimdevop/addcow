@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import { Renderer, Program, Mesh, Triangle, Vec3 } from 'ogl';
-import './Orb.css';
+import { Mesh, Program, Renderer, Triangle, Vec3 } from "ogl";
+import { useEffect, useRef } from "react";
+import "./Orb.css";
 
 interface OrbProps {
   hue?: number;
@@ -11,7 +11,12 @@ interface OrbProps {
   forceHoverState?: boolean;
 }
 
-export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, forceHoverState = false }: OrbProps) {
+export function Orb({
+  hue = 0,
+  hoverIntensity = 0.2,
+  rotateOnHover = true,
+  forceHoverState = false,
+}: OrbProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
 
   const vert = /* glsl */ `
@@ -188,13 +193,17 @@ export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, force
       uniforms: {
         iTime: { value: 0 },
         iResolution: {
-          value: new Vec3(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height)
+          value: new Vec3(
+            gl.canvas.width,
+            gl.canvas.height,
+            gl.canvas.width / gl.canvas.height,
+          ),
         },
         hue: { value: hue },
         hover: { value: 0 },
         rot: { value: 0 },
-        hoverIntensity: { value: hoverIntensity }
-      }
+        hoverIntensity: { value: hoverIntensity },
+      },
     });
 
     const mesh = new Mesh(gl, { geometry, program });
@@ -205,11 +214,15 @@ export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, force
       const width = container.clientWidth;
       const height = container.clientHeight;
       renderer.setSize(width * dpr, height * dpr);
-      gl.canvas.style.width = width + 'px';
-      gl.canvas.style.height = height + 'px';
-      program.uniforms.iResolution.value.set(gl.canvas.width, gl.canvas.height, gl.canvas.width / gl.canvas.height);
+      gl.canvas.style.width = width + "px";
+      gl.canvas.style.height = height + "px";
+      program.uniforms.iResolution.value.set(
+        gl.canvas.width,
+        gl.canvas.height,
+        gl.canvas.width / gl.canvas.height,
+      );
     }
-    window.addEventListener('resize', resize);
+    window.addEventListener("resize", resize);
     resize();
 
     let targetHover = 0;
@@ -240,8 +253,8 @@ export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, force
       targetHover = 0;
     };
 
-    container.addEventListener('mousemove', handleMouseMove);
-    container.addEventListener('mouseleave', handleMouseLeave);
+    container.addEventListener("mousemove", handleMouseMove);
+    container.addEventListener("mouseleave", handleMouseLeave);
 
     let rafId: number;
     const update = (t: number) => {
@@ -253,7 +266,8 @@ export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, force
       program.uniforms.hoverIntensity.value = hoverIntensity;
 
       const effectiveHover = forceHoverState ? 1 : targetHover;
-      program.uniforms.hover.value += (effectiveHover - program.uniforms.hover.value) * 0.1;
+      program.uniforms.hover.value +=
+        (effectiveHover - program.uniforms.hover.value) * 0.1;
 
       if (rotateOnHover && effectiveHover > 0.5) {
         currentRot += dt * rotationSpeed;
@@ -266,13 +280,13 @@ export function Orb({ hue = 0, hoverIntensity = 0.2, rotateOnHover = true, force
 
     return () => {
       cancelAnimationFrame(rafId);
-      window.removeEventListener('resize', resize);
-      container.removeEventListener('mousemove', handleMouseMove);
-      container.removeEventListener('mouseleave', handleMouseLeave);
+      window.removeEventListener("resize", resize);
+      container.removeEventListener("mousemove", handleMouseMove);
+      container.removeEventListener("mouseleave", handleMouseLeave);
       if (container.contains(gl.canvas)) {
         container.removeChild(gl.canvas);
       }
-      gl.getExtension('WEBGL_lose_context')?.loseContext();
+      gl.getExtension("WEBGL_lose_context")?.loseContext();
     };
   }, [hue, hoverIntensity, rotateOnHover, forceHoverState]);
 

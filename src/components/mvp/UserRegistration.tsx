@@ -1,7 +1,7 @@
 "use client";
 
 import { SignInButton, SignUpButton, useUser } from "@clerk/nextjs";
-import { LuLogIn, LuUserPlus, LuCheck } from "react-icons/lu";
+import { LuCheck, LuLogIn, LuUserPlus } from "react-icons/lu";
 
 export function UserRegistration() {
   const { isSignedIn, user } = useUser();
@@ -67,4 +67,3 @@ export function UserRegistration() {
     </div>
   );
 }
-

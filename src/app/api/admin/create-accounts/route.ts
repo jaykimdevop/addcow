@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/clerk";
 
 export async function POST(request: NextRequest) {
@@ -15,7 +15,7 @@ export async function POST(request: NextRequest) {
       console.error("Database error:", fetchError);
       return NextResponse.json(
         { error: "Failed to fetch submissions" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
     if (!clerkSecretKey) {
       return NextResponse.json(
         { error: "Clerk secret key not configured" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -67,7 +67,7 @@ export async function POST(request: NextRequest) {
             continue;
           }
           throw new Error(
-            errorData.errors?.[0]?.message || "Failed to create account"
+            errorData.errors?.[0]?.message || "Failed to create account",
           );
         }
 
@@ -83,9 +83,12 @@ export async function POST(request: NextRequest) {
         errors.push(
           `Failed to create account for ${submission.email}: ${
             error instanceof Error ? error.message : "Unknown error"
-          }`
+          }`,
         );
-        console.error(`Failed to create account for ${submission.email}:`, error);
+        console.error(
+          `Failed to create account for ${submission.email}:`,
+          error,
+        );
       }
     }
 
@@ -100,8 +103,7 @@ export async function POST(request: NextRequest) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { useState, useEffect } from "react";
+import { motion } from "motion/react";
+import { useEffect, useState } from "react";
 
 interface LiquidEtherProps {
   className?: string;
@@ -44,12 +44,12 @@ export function LiquidEther({
     >
       {/* Base gradient background */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900" />
-      
+
       {/* Animated blobs */}
       {colors.map((color, index) => {
         const baseX = [20, 80, 50, 30][index] || 50;
         const baseY = [30, 70, 50, 80][index] || 50;
-        
+
         return (
           <motion.div
             key={index}

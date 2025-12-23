@@ -1,5 +1,7 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { SubmissionsTable } from "@/components/admin/SubmissionsTable";
+import { createServiceClient } from "@/lib/supabase/server";
 
 interface SearchParams {
   page?: string;
@@ -27,8 +29,11 @@ export default async function SubmissionsPage({
     query = query.ilike("email", `%${search}%`);
   }
 
-  const { data: submissions, count, error } = await query
-    .range(offset, offset + pageSize - 1);
+  const {
+    data: submissions,
+    count,
+    error,
+  } = await query.range(offset, offset + pageSize - 1);
 
   if (error) {
     console.error("Error fetching submissions:", error);
@@ -37,16 +42,11 @@ export default async function SubmissionsPage({
   const totalPages = count ? Math.ceil(count / pageSize) : 0;
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Submissions
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          View and manage all email submissions
-        </p>
-      </div>
-
+    <AdminLayout>
+      <AdminHeader
+        title="제출 관리"
+        description="이메일 제출 내역을 조회하고 관리하세요"
+      />
       <SubmissionsTable
         submissions={submissions || []}
         currentPage={page}
@@ -54,7 +54,6 @@ export default async function SubmissionsPage({
         totalCount={count || 0}
         search={search}
       />
-    </div>
+    </AdminLayout>
   );
 }
-

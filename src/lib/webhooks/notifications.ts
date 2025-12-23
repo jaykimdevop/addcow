@@ -4,7 +4,7 @@
 export async function sendWebhookNotification(
   eventType: string,
   userId: string,
-  data: Record<string, unknown>
+  data: Record<string, unknown>,
 ) {
   // Placeholder for notification logic
   // You can integrate with:
@@ -27,4 +27,3 @@ export async function sendWebhookNotification(
 
   return { success: true };
 }
-

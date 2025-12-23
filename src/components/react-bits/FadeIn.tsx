@@ -1,7 +1,7 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { ReactNode, useEffect, useState } from "react";
+import { motion } from "motion/react";
+import { type ReactNode, useEffect, useState } from "react";
 
 interface FadeInProps {
   children: ReactNode;

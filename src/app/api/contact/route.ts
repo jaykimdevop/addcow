@@ -1,6 +1,10 @@
-import { NextRequest, NextResponse } from "next/server";
-import { createServiceClient } from "@/lib/supabase/server";
+import { type NextRequest, NextResponse } from "next/server";
+import validator from "validator";
 import { sendEmail } from "@/lib/email";
+import { createErrorResponse, logError } from "@/lib/errors";
+import { checkRateLimit } from "@/lib/ratelimit";
+import { createServiceClient } from "@/lib/supabase/server";
+import type { ContactResponse } from "@/types/api";
 
 // HTML sanitization function to prevent XSS attacks
 function escapeHtml(text: string): string {
@@ -16,65 +20,85 @@ function escapeHtml(text: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Rate limiting 체크
+    const rateLimitResponse = await checkRateLimit(request, "contact");
+    if (rateLimitResponse) {
+      return rateLimitResponse;
+    }
+
     const { name, email, message } = await request.json();
 
+    // 필드 검증
     if (!name || !email || !message) {
       return NextResponse.json(
-        { error: "All fields are required" },
-        { status: 400 }
+        createErrorResponse("ALL_FIELDS_REQUIRED", 400),
+        { status: 400 },
       );
     }
 
-    // Basic email validation
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(email)) {
-      return NextResponse.json(
-        { error: "Invalid email format" },
-        { status: 400 }
-      );
+    // 이메일 검증
+    const normalizedEmail = email.toLowerCase().trim();
+    if (!validator.isEmail(normalizedEmail)) {
+      return NextResponse.json(createErrorResponse("EMAIL_INVALID", 400), {
+        status: 400,
+      });
     }
 
     // Sanitize user inputs to prevent XSS
-    const sanitizedName = escapeHtml(name);
-    const sanitizedEmail = escapeHtml(email);
-    const sanitizedMessage = escapeHtml(message).replace(/\n/g, "<br>");
+    const sanitizedName = escapeHtml(name.trim());
+    const sanitizedEmail = escapeHtml(normalizedEmail);
+    const sanitizedMessage = escapeHtml(message.trim()).replace(/\n/g, "<br>");
 
     // Send email notification to admin
-    // Use SMTP_USER as admin email (same Gmail account used for sending)
-    const adminEmail = process.env.SMTP_USER || process.env.EMAIL_FROM || "admin@yourdomain.com";
-    await sendEmail({
-      to: adminEmail,
-      subject: `새 문의: ${sanitizedName}`,
-      html: `
-        <h2>새로운 문의가 접수되었습니다</h2>
-        <p><strong>이름:</strong> ${sanitizedName}</p>
-        <p><strong>이메일:</strong> ${sanitizedEmail}</p>
-        <p><strong>메시지:</strong></p>
-        <p>${sanitizedMessage}</p>
-      `,
-    });
+    const adminEmail =
+      process.env.SMTP_USER || process.env.EMAIL_FROM || "admin@yourdomain.com";
 
-    // Optionally save to database
-    const supabase = await createServiceClient();
-    await supabase.from("submissions").insert({
-      email,
-      metadata: {
-        type: "contact",
-        name,
-        message,
-      },
-    });
+    try {
+      await sendEmail({
+        to: adminEmail,
+        subject: `새 문의: ${sanitizedName}`,
+        html: `
+          <h2>새로운 문의가 접수되었습니다</h2>
+          <p><strong>이름:</strong> ${sanitizedName}</p>
+          <p><strong>이메일:</strong> ${sanitizedEmail}</p>
+          <p><strong>메시지:</strong></p>
+          <p>${sanitizedMessage}</p>
+        `,
+      });
+    } catch (error) {
+      logError("contact:send_email", error);
+      return NextResponse.json(
+        createErrorResponse("CONTACT_SEND_FAILED", 500, error),
+        { status: 500 },
+      );
+    }
 
-    return NextResponse.json(
-      { message: "Message sent successfully" },
-      { status: 200 }
-    );
+    // Save to database
+    try {
+      const supabase = await createServiceClient();
+      await supabase.from("submissions").insert({
+        email: normalizedEmail,
+        metadata: {
+          type: "contact",
+          name: sanitizedName,
+          message: message.trim(),
+        },
+      });
+    } catch (error) {
+      logError("contact:db_save", error);
+      // 이메일은 전송되었으므로 DB 저장 실패는 무시
+    }
+
+    const response: ContactResponse = {
+      message: "문의가 성공적으로 전송되었습니다",
+    };
+
+    return NextResponse.json(response, { status: 200 });
   } catch (error) {
-    console.error("Contact form error:", error);
+    logError("contact:api", error);
     return NextResponse.json(
-      { error: "Failed to send message" },
-      { status: 500 }
+      createErrorResponse("INTERNAL_ERROR", 500, error),
+      { status: 500 },
     );
   }
 }
-

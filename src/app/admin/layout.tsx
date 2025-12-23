@@ -1,7 +1,6 @@
 import { redirect } from "next/navigation";
 import { requireAuth } from "@/lib/clerk";
 import { createServiceClient } from "@/lib/supabase/server";
-import { AdminNav } from "@/components/admin/AdminNav";
 
 export default async function AdminLayout({
   children,
@@ -29,11 +28,5 @@ export default async function AdminLayout({
     redirect("/");
   }
 
-  return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <AdminNav role={adminUser.role} />
-      <main className="container mx-auto px-4 py-8">{children}</main>
-    </div>
-  );
+  return <>{children}</>;
 }
-

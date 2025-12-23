@@ -15,7 +15,7 @@ function createTransporter() {
 
   if (!smtpUser || !smtpPassword) {
     throw new Error(
-      "Email service not configured. Please set SMTP_USER and SMTP_PASSWORD in .env.local"
+      "Email service not configured. Please set SMTP_USER and SMTP_PASSWORD in .env.local",
     );
   }
 
@@ -34,8 +34,10 @@ export async function sendEmail(options: EmailOptions) {
   try {
     const transporter = createTransporter();
 
-    const fromEmail = options.from || process.env.EMAIL_FROM || process.env.SMTP_USER;
-    const fromName = options.fromName || process.env.EMAIL_FROM_NAME || "Your App";
+    const fromEmail =
+      options.from || process.env.EMAIL_FROM || process.env.SMTP_USER;
+    const fromName =
+      options.fromName || process.env.EMAIL_FROM_NAME || "Your App";
 
     const info = await transporter.sendMail({
       from: `${fromName} <${fromEmail}>`,
@@ -54,7 +56,7 @@ export async function sendEmail(options: EmailOptions) {
 
 export function generateMVPNotificationEmail(
   email: string,
-  signupUrl: string
+  signupUrl: string,
 ): string {
   return `
 <!DOCTYPE html>

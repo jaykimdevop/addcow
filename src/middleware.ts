@@ -9,7 +9,7 @@ const isProtectedRoute = createRouteMatcher([
   "/node(.*)",
   "/asset(.*)",
   "/knowledge(.*)",
-  "/profile(.*)"
+  "/profile(.*)",
 ]);
 const isWebhookRoute = createRouteMatcher(["/api/webhooks(.*)"]);
 
@@ -32,4 +32,3 @@ export const config = {
     "/(api|trpc)(.*)",
   ],
 };
-

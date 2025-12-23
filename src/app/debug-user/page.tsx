@@ -76,7 +76,8 @@ export default async function DebugUserPage() {
                 </div>
                 <div className="mt-4 p-4 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded">
                   <p className="text-green-800 dark:text-green-200">
-                    ✅ 관리자 권한이 있습니다. /admin 페이지에 접근할 수 있습니다.
+                    ✅ 관리자 권한이 있습니다. /admin 페이지에 접근할 수
+                    있습니다.
                   </p>
                 </div>
               </div>
@@ -106,7 +107,8 @@ export default async function DebugUserPage() {
 VALUES ('${userId}', 'admin');`}
                     </pre>
                     <p className="text-xs text-blue-700 dark:text-blue-300 mt-2">
-                      또는 Clerk 대시보드에서 웹훅이 설정되어 있다면, 사용자를 생성하면 자동으로 추가됩니다.
+                      또는 Clerk 대시보드에서 웹훅이 설정되어 있다면, 사용자를
+                      생성하면 자동으로 추가됩니다.
                     </p>
                   </div>
                 )}

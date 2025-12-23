@@ -1,7 +1,9 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { RecentSubmissions } from "@/components/admin/RecentSubmissions";
 import { StatsCards } from "@/components/admin/StatsCards";
 import { SubmissionsChart } from "@/components/admin/SubmissionsChart";
-import { RecentSubmissions } from "@/components/admin/RecentSubmissions";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export default async function AdminDashboard() {
   const supabase = await createServiceClient();
@@ -52,28 +54,24 @@ export default async function AdminDashboard() {
     .order("created_at", { ascending: true });
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Dashboard
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Overview of your waitlist submissions
-        </p>
-      </div>
-
-      <StatsCards
-        total={totalCount || 0}
-        today={todayCount || 0}
-        week={weekCount || 0}
-        month={monthCount || 0}
+    <AdminLayout>
+      <AdminHeader
+        title="대시보드"
+        description="사이트 통계 및 최근 제출 내역을 확인하세요"
       />
+      <div className="space-y-4">
+        <StatsCards
+          total={totalCount || 0}
+          today={todayCount || 0}
+          week={weekCount || 0}
+          month={monthCount || 0}
+        />
 
-      <div className="grid lg:grid-cols-2 gap-8">
-        <SubmissionsChart data={chartData || []} />
-        <RecentSubmissions submissions={recentSubmissions || []} />
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <SubmissionsChart data={chartData || []} />
+          <RecentSubmissions submissions={recentSubmissions || []} />
+        </div>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
-

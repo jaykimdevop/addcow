@@ -5,7 +5,10 @@ import { motion } from "motion/react";
 
 export default function SSOCallbackPage() {
   return (
-    <div className="flex min-h-screen items-center justify-center" style={{ backgroundColor: '#060010' }}>
+    <div
+      className="flex min-h-screen items-center justify-center"
+      style={{ backgroundColor: "#060010" }}
+    >
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}

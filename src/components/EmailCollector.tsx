@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useSignIn } from "@clerk/nextjs";
+import { useEffect, useState } from "react";
 import { FcGoogle } from "react-icons/fc";
 import { LuLoader, LuTriangleAlert } from "react-icons/lu";
 import { event } from "@/lib/analytics";
@@ -71,7 +71,7 @@ export function EmailCollector() {
       setError(
         err instanceof Error
           ? err.message
-          : "로그인 중 오류가 발생했습니다. 다시 시도해주세요."
+          : "로그인 중 오류가 발생했습니다. 다시 시도해주세요.",
       );
       setIsLoading(false);
     }
@@ -85,8 +85,8 @@ export function EmailCollector() {
           disabled={isLoading || !signInLoaded}
           className="w-full px-4 py-1.5 rounded-full border bg-white transition-all text-center text-sm font-medium hover:shadow-md flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
           style={{
-            borderColor: 'var(--primary)',
-            color: 'var(--primary-dark)',
+            borderColor: "var(--primary)",
+            color: "var(--primary-dark)",
           }}
         >
           {isLoading ? (
@@ -108,7 +108,10 @@ export function EmailCollector() {
           </div>
         )}
         {remaining !== null && remaining > 0 && (
-          <p className="text-xs text-center mt-2 opacity-70" style={{ color: 'var(--primary)' }}>
+          <p
+            className="text-xs text-center mt-2 opacity-70"
+            style={{ color: "var(--primary)" }}
+          >
             선착순 300명 한정 • 남은 자리: {remaining}명
           </p>
         )}
@@ -116,4 +119,3 @@ export function EmailCollector() {
     </div>
   );
 }
-

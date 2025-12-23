@@ -8,7 +8,7 @@ const DAILY_DECREASE = 50;
 function getSimulatedCount(initialCount: number, startDate: Date): number {
   const now = new Date();
   const daysPassed = Math.floor(
-    (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24)
+    (now.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   // 각 날짜마다 50명을 랜덤한 시간에 분산해서 차감
@@ -63,7 +63,7 @@ export async function GET() {
             actual_registrations: 0,
           },
         },
-        { onConflict: "key" }
+        { onConflict: "key" },
       );
     }
 

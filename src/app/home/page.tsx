@@ -1,7 +1,7 @@
-import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
-import { checkIsAdmin } from "@/lib/clerk";
+import { redirect } from "next/navigation";
 import { HomeClient } from "@/components/HomeClient";
+import { checkIsAdmin } from "@/lib/clerk";
 
 export default async function HomePage() {
   // 로그인 확인

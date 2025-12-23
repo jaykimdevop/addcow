@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { useUser, useClerk } from "@clerk/nextjs";
-import { LuLayoutDashboard, LuLogOut, LuX } from "react-icons/lu";
-import { useRouter } from "next/navigation";
+import { useClerk, useUser } from "@clerk/nextjs";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
+import { LuLayoutDashboard, LuLogOut, LuX } from "react-icons/lu";
 
 interface ProfileMenuProps {
   isAdmin: boolean;
@@ -19,9 +19,10 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
   const menuRef = useRef<HTMLDivElement>(null);
 
   // 크기 설정
-  const sizeConfig = size === "small"
-    ? { dimension: 32, imageSize: 32, fontSize: "text-xs" }
-    : { dimension: 72, imageSize: 72, fontSize: "text-xl" };
+  const sizeConfig =
+    size === "small"
+      ? { dimension: 32, imageSize: 32, fontSize: "text-xs" }
+      : { dimension: 72, imageSize: 72, fontSize: "text-xl" };
 
   // 외부 클릭 감지
   useEffect(() => {
@@ -66,7 +67,7 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
           style={{
             width: `${sizeConfig.dimension}px`,
             height: `${sizeConfig.dimension}px`,
-            borderColor: 'var(--primary)',
+            borderColor: "var(--primary)",
           }}
         >
           {user.imageUrl ? (
@@ -80,9 +81,10 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
           ) : (
             <div
               className={`w-full h-full flex items-center justify-center text-white font-medium ${sizeConfig.fontSize}`}
-              style={{ backgroundColor: 'var(--primary)' }}
+              style={{ backgroundColor: "var(--primary)" }}
             >
-              {user.firstName?.charAt(0) || user.emailAddresses[0]?.emailAddress.charAt(0).toUpperCase()}
+              {user.firstName?.charAt(0) ||
+                user.emailAddresses[0]?.emailAddress.charAt(0).toUpperCase()}
             </div>
           )}
         </button>
@@ -103,10 +105,10 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
               style={{
                 width: `${sizeConfig.dimension}px`,
                 height: `${sizeConfig.dimension}px`,
-                borderColor: 'var(--primary)',
+                borderColor: "var(--primary)",
               }}
             >
-              <LuX className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              <LuX className="w-4 h-4" style={{ color: "var(--primary)" }} />
             </button>
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               뒤로가기
@@ -122,10 +124,13 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
                 style={{
                   width: `${sizeConfig.dimension}px`,
                   height: `${sizeConfig.dimension}px`,
-                  borderColor: 'var(--primary)',
+                  borderColor: "var(--primary)",
                 }}
               >
-                <LuLayoutDashboard className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+                <LuLayoutDashboard
+                  className="w-4 h-4"
+                  style={{ color: "var(--primary)" }}
+                />
               </button>
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
                 대시보드로 이동
@@ -137,14 +142,17 @@ export function ProfileMenu({ isAdmin, size = "large" }: ProfileMenuProps) {
           <div className="relative group">
             <button
               onClick={handleLogoutClick}
-              className={`rounded-full flex items-center justify-center border-2 cursor-pointer bg-white transition-all hover:scale-110 ${isAdmin ? 'profile-menu-slide-in-delay-2' : 'profile-menu-slide-in-delay-1'}`}
+              className={`rounded-full flex items-center justify-center border-2 cursor-pointer bg-white transition-all hover:scale-110 ${isAdmin ? "profile-menu-slide-in-delay-2" : "profile-menu-slide-in-delay-1"}`}
               style={{
                 width: `${sizeConfig.dimension}px`,
                 height: `${sizeConfig.dimension}px`,
-                borderColor: 'var(--primary)',
+                borderColor: "var(--primary)",
               }}
             >
-              <LuLogOut className="w-4 h-4" style={{ color: 'var(--primary)' }} />
+              <LuLogOut
+                className="w-4 h-4"
+                style={{ color: "var(--primary)" }}
+              />
             </button>
             <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-black text-white text-xs rounded whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
               로그아웃

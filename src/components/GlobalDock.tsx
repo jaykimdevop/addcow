@@ -1,15 +1,37 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { useRouter, usePathname } from "next/navigation";
-import { VscHome, VscGitCommit, VscFiles, VscCloudUpload } from "react-icons/vsc";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import {
+  LuDownload,
+  LuFileText,
+  LuLayoutDashboard,
+  LuSettings,
+  LuUsers,
+} from "react-icons/lu";
+import {
+  VscCloudUpload,
+  VscFiles,
+  VscGitCommit,
+  VscHome,
+  VscShield,
+} from "react-icons/vsc";
+import { AnimatePresence, motion } from "motion/react";
 import Dock from "@/components/Dock";
 
 export function GlobalDock() {
   const { isSignedIn, isLoaded, user } = useUser();
   const router = useRouter();
   const pathname = usePathname();
+  const [isAdmin, setIsAdmin] = useState(false);
+  const [checkingAdmin, setCheckingAdmin] = useState(true);
+  const [adminRole, setAdminRole] = useState<"admin" | "viewer" | null>(null);
+
+  // Local Dock 숨김 상태
+  const [hiddenLocalDocks, setHiddenLocalDocks] = useState<Set<string>>(
+    new Set(),
+  );
 
   // Dock settings state (localStorage에서 불러오기)
   const [panelHeight, setPanelHeight] = useState(68);
@@ -49,7 +71,10 @@ export function GlobalDock() {
     window.addEventListener("dockSettingsChange", handleDockSettingsChange);
 
     return () => {
-      window.removeEventListener("dockSettingsChange", handleDockSettingsChange);
+      window.removeEventListener(
+        "dockSettingsChange",
+        handleDockSettingsChange,
+      );
     };
   }, []);
 
@@ -61,6 +86,32 @@ export function GlobalDock() {
       localStorage.setItem("dock_magnification", magnification.toString());
     }
   }, [panelHeight, baseItemSize, magnification]);
+
+  // 관리자 권한 확인
+  useEffect(() => {
+    if (!isSignedIn || !user) {
+      setIsAdmin(false);
+      setCheckingAdmin(false);
+      return;
+    }
+
+    const checkAdmin = async () => {
+      try {
+        const response = await fetch("/api/admin/check");
+        const data = await response.json();
+        setIsAdmin(data.isAdmin || false);
+        setAdminRole(data.role || null);
+      } catch (error) {
+        console.error("Failed to check admin status:", error);
+        setIsAdmin(false);
+        setAdminRole(null);
+      } finally {
+        setCheckingAdmin(false);
+      }
+    };
+
+    checkAdmin();
+  }, [isSignedIn, user]);
 
   // 로그인하지 않았거나 로딩 중이면 Dock 표시 안 함
   if (!isLoaded || !isSignedIn || !user) {
@@ -74,7 +125,7 @@ export function GlobalDock() {
   }
 
   // 각 Dock 아이템의 경로 매핑
-  const dockItems = [
+  const baseDockItems = [
     {
       icon: <VscHome size={18} />,
       label: "홈",
@@ -99,28 +150,71 @@ export function GlobalDock() {
       path: "/knowledge",
       onClick: () => router.push("/knowledge"),
     },
-    {
-      icon: user?.imageUrl ? (
-        <img
-          src={user.imageUrl}
-          alt={user.fullName || "Profile"}
-          className="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none p-[2px]"
-        />
-      ) : (
-        <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold rounded-full pointer-events-none m-[2px]">
-          <span className="text-[14px]">
-            {user?.firstName?.[0] ||
-              user?.emailAddresses?.[0]?.emailAddress?.[0] ||
-              "U"}
-          </span>
-        </div>
-      ),
-      label: "설정",
-      path: "/settings",
-      onClick: () => router.push("/settings"),
-      className: "overflow-hidden",
-    },
   ];
+
+  // Local Dock 토글 함수
+  const toggleLocalDock = (dockId: string) => {
+    setHiddenLocalDocks((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(dockId)) {
+        newSet.delete(dockId);
+      } else {
+        newSet.add(dockId);
+      }
+      return newSet;
+    });
+  };
+
+  // 관리자인 경우 관리자 버튼 추가
+  const isAdminPage = pathname?.startsWith("/admin");
+  const adminItem = isAdmin && !checkingAdmin
+    ? {
+        icon: <VscShield size={18} />,
+        label: "관리자",
+        path: "/admin",
+        onClick: () => {
+          if (isAdminPage) {
+            // 이미 admin 페이지에 있으면 Local Dock 토글
+            toggleLocalDock("admin");
+          } else {
+            // admin 페이지로 이동하고 숨김 상태 해제
+            setHiddenLocalDocks((prev) => {
+              const newSet = new Set(prev);
+              newSet.delete("admin");
+              return newSet;
+            });
+            router.push("/admin");
+          }
+        },
+      }
+    : null;
+
+  const settingsItem = {
+    icon: user?.imageUrl ? (
+      <img
+        src={user.imageUrl}
+        alt={user.fullName || "Profile"}
+        className="absolute inset-0 w-full h-full object-cover rounded-full pointer-events-none p-[2px]"
+      />
+    ) : (
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold rounded-full pointer-events-none m-[2px]">
+        <span className="text-[14px]">
+          {user?.firstName?.[0] ||
+            user?.emailAddresses?.[0]?.emailAddress?.[0] ||
+            "U"}
+        </span>
+      </div>
+    ),
+    label: "설정",
+    path: "/settings",
+    onClick: () => router.push("/settings"),
+    className: "overflow-hidden",
+  };
+
+  // 최종 Dock 아이템 배열 (settings 버튼 다음에 admin 버튼 배치)
+  const dockItems = adminItem
+    ? [...baseDockItems, settingsItem, adminItem]
+    : [...baseDockItems, settingsItem];
 
   // 현재 경로와 일치하는 아이템 찾기
   const isActive = (path: string) => {
@@ -129,8 +223,46 @@ export function GlobalDock() {
     return pathname === path || pathname.startsWith(path + "/");
   };
 
+  // Local Dock용 활성화 체크 (루트 경로는 정확히 일치할 때만)
+  const isLocalDockActive = (href: string, rootPath: string) => {
+    if (!pathname) return false;
+    if (href === rootPath) {
+      return pathname === rootPath;
+    }
+    return pathname === href || pathname.startsWith(href + "/");
+  };
+
+  // ============================================================
+  // Local Dock 정의
+  // ============================================================
+
+  // Local Dock - Admin
+  const localDockAdmin =
+    isAdminPage && adminRole && !hiddenLocalDocks.has("admin")
+      ? [
+          { href: "/admin", label: "대시보드", icon: LuLayoutDashboard },
+          { href: "/admin/submissions", label: "제출 관리", icon: LuFileText },
+          ...(adminRole === "admin"
+            ? [
+                { href: "/admin/settings", label: "설정", icon: LuSettings },
+                {
+                  href: "/admin/users",
+                  label: "사용자 관리",
+                  icon: LuUsers,
+                },
+                { href: "/admin/export", label: "내보내기", icon: LuDownload },
+              ]
+            : []),
+        ]
+      : [];
+
+  // 현재 활성화된 Local Dock 결정
+  const activeLocalDock = localDockAdmin.length > 0 ? "admin" : null;
+  const localDockItems = localDockAdmin;
+  const localDockRootPath = "/admin";
+
   return (
-    <div className="fixed inset-0 flex items-center justify-center pointer-events-none z-50">
+    <div className="fixed bottom-2 left-1/2 -translate-x-1/2 flex flex-col-reverse lg:flex-row items-center lg:items-end gap-2 pointer-events-none z-50">
       <Dock
         items={dockItems.map((item) => ({
           ...item,
@@ -140,6 +272,39 @@ export function GlobalDock() {
         baseItemSize={baseItemSize}
         magnification={magnification}
       />
+      {/* Local Dock */}
+      <AnimatePresence mode="popLayout">
+        {activeLocalDock && localDockItems.length > 0 && (
+          <motion.div
+            key={activeLocalDock}
+            layout
+            initial={{ opacity: 0, scale: 0.8, filter: "blur(4px)" }}
+            animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+            exit={{ opacity: 0, scale: 0.8, filter: "blur(4px)" }}
+            transition={{
+              type: "spring",
+              stiffness: 300,
+              damping: 25,
+              mass: 0.8,
+            }}
+          >
+            <Dock
+              items={localDockItems.map((item) => {
+                const Icon = item.icon;
+                return {
+                  icon: <Icon size={18} />,
+                  label: item.label,
+                  onClick: () => router.push(item.href),
+                  isActive: isLocalDockActive(item.href, localDockRootPath),
+                };
+              })}
+              panelHeight={panelHeight}
+              baseItemSize={baseItemSize}
+              magnification={magnification}
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

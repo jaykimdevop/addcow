@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef } from "react";
-import { LuUpload, LuX, LuCheck, LuLoader2 } from "react-icons/lu";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useRef, useState } from "react";
+import { LuCheck, LuLoader, LuUpload, LuX } from "react-icons/lu";
 
 interface UploadedFile {
   name: string;
@@ -95,8 +95,8 @@ export function FileUpload() {
         prev.map((f) =>
           f.name === file.name
             ? { ...f, status: "success" as const, progress: 100 }
-            : f
-        )
+            : f,
+        ),
       );
     } catch (error) {
       // 업로드 실패
@@ -108,8 +108,8 @@ export function FileUpload() {
                 status: "error" as const,
                 error: error instanceof Error ? error.message : "업로드 실패",
               }
-            : f
-        )
+            : f,
+        ),
       );
     }
   };
@@ -178,7 +178,10 @@ export function FileUpload() {
               >
                 <div className="flex-shrink-0">
                   {file.status === "uploading" && (
-                    <LuLoader2 className="animate-spin text-purple-500" size={20} />
+                    <LuLoader
+                      className="animate-spin text-purple-500"
+                      size={20}
+                    />
                   )}
                   {file.status === "success" && (
                     <div className="w-5 h-5 rounded-full bg-green-500 flex items-center justify-center">

@@ -157,4 +157,3 @@ export interface Database {
 
 // Submission type alias
 export type Submission = Database["public"]["Tables"]["submissions"]["Row"];
-

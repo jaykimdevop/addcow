@@ -1,8 +1,8 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { EmailCollector } from "@/components/EmailCollector";
 import { LuSparkles } from "react-icons/lu";
+import { EmailCollector } from "@/components/EmailCollector";
 import { FadeIn, SplitText } from "@/components/react-bits";
 
 interface HeroSectionProps {
@@ -22,7 +22,15 @@ export function HeroSection({ isAdmin, showContent = true }: HeroSectionProps) {
             <FadeIn delay={0.1} duration={0.6}>
               <div className="flex items-center justify-center gap-3 mb-1">
                 <div className="pointer-events-auto">
-                  <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border" style={{ backgroundColor: 'color-mix(in srgb, var(--primary) 15%, transparent)', color: 'var(--primary)', borderColor: 'var(--primary)' }}>
+                  <div
+                    className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs border"
+                    style={{
+                      backgroundColor:
+                        "color-mix(in srgb, var(--primary) 15%, transparent)",
+                      color: "var(--primary)",
+                      borderColor: "var(--primary)",
+                    }}
+                  >
                     <LuSparkles className="w-3.5 h-3.5" />
                     ADDCOW RAG BETA
                   </div>

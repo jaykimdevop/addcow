@@ -1,12 +1,15 @@
-import { createServiceClient } from "@/lib/supabase/server";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminLayout } from "@/components/admin/AdminLayout";
 import { UsersTable } from "@/components/admin/UsersTable";
-import { getClerkUser } from "@/lib/clerk";
+import { getClerkUser, requireAuth } from "@/lib/clerk";
+import { createServiceClient } from "@/lib/supabase/server";
 
 // 동적 렌더링 강제 (캐싱 방지)
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
 export default async function UsersPage() {
+  await requireAuth();
   const supabase = await createServiceClient();
 
   const { data: adminUsers, error } = await supabase
@@ -23,14 +26,12 @@ export default async function UsersPage() {
     (adminUsers || []).map(async (adminUser) => {
       // Supabase에 이미 사용자 정보가 모두 있으면 그것을 사용
       // image_url이 없으면 Clerk API에서 가져오기
-      if (
-        adminUser.email &&
-        adminUser.first_name &&
-        adminUser.image_url
-      ) {
+      if (adminUser.email && adminUser.first_name && adminUser.image_url) {
         // 디버깅: image_url 값 확인
         if (!adminUser.image_url || adminUser.image_url.trim() === "") {
-          console.log(`[UsersPage] User ${adminUser.clerk_user_id} has empty image_url, fetching from Clerk`);
+          console.log(
+            `[UsersPage] User ${adminUser.clerk_user_id} has empty image_url, fetching from Clerk`,
+          );
           // image_url이 비어있으면 Clerk API에서 가져오기
         } else {
           return {
@@ -49,10 +50,10 @@ export default async function UsersPage() {
       // Supabase에 정보가 없으면 Clerk API에서 가져오기
       try {
         const clerkUser = await getClerkUser(adminUser.clerk_user_id);
-        
+
         if (!clerkUser) {
           console.warn(
-            `[UsersPage] Failed to fetch Clerk user for clerk_user_id: ${adminUser.clerk_user_id}`
+            `[UsersPage] Failed to fetch Clerk user for clerk_user_id: ${adminUser.clerk_user_id}`,
           );
           return {
             ...adminUser,
@@ -87,29 +88,23 @@ export default async function UsersPage() {
       } catch (error) {
         console.error(
           `[UsersPage] Error processing user ${adminUser.clerk_user_id}:`,
-          error
+          error,
         );
         return {
           ...adminUser,
           clerkUser: null,
         };
       }
-    })
+    }),
   );
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          User Management
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Manage admin users and their roles
-        </p>
-      </div>
-
+    <AdminLayout>
+      <AdminHeader
+        title="사용자 관리"
+        description="관리자 사용자를 추가하고 관리하세요"
+      />
       <UsersTable users={usersWithClerkInfo} />
-    </div>
+    </AdminLayout>
   );
 }
-

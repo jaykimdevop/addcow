@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { LuFolder, LuFile, LuImage, LuFileText, LuLoader2 } from "react-icons/lu";
+import { useEffect, useState } from "react";
+import {
+  LuFile,
+  LuFileText,
+  LuFolder,
+  LuImage,
+  LuLoader,
+} from "react-icons/lu";
 import type { GoogleDriveFile } from "@/types/google-drive";
 
 interface GoogleDriveFilesProps {
@@ -27,7 +33,9 @@ export function GoogleDriveFiles({ folderId = "root" }: GoogleDriveFilesProps) {
 
       if (!response.ok) {
         if (response.status === 401) {
-          setError("Google Drive가 연동되지 않았습니다. 설정에서 연동해주세요.");
+          setError(
+            "Google Drive가 연동되지 않았습니다. 설정에서 연동해주세요.",
+          );
         } else {
           setError("파일 목록을 불러오는데 실패했습니다.");
         }
@@ -104,8 +112,10 @@ export function GoogleDriveFiles({ folderId = "root" }: GoogleDriveFilesProps) {
   if (loading && files.length === 0) {
     return (
       <div className="flex items-center justify-center py-12">
-        <LuLoader2 className="animate-spin text-purple-500" size={24} />
-        <span className="ml-3 text-neutral-400">파일 목록을 불러오는 중...</span>
+        <LuLoader className="animate-spin text-purple-500" size={24} />
+        <span className="ml-3 text-neutral-400">
+          파일 목록을 불러오는 중...
+        </span>
       </div>
     );
   }

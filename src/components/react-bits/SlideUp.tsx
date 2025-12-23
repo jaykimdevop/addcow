@@ -1,7 +1,7 @@
 "use client";
 
-import { motion, useInView } from "framer-motion";
-import { ReactNode, useRef } from "react";
+import { motion, useInView } from "motion/react";
+import { type ReactNode, useRef } from "react";
 
 interface SlideUpProps {
   children: ReactNode;

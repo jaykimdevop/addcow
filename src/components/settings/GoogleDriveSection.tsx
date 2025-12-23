@@ -1,9 +1,12 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
-import { LuCloud, LuCheck, LuX, LuLoader } from "react-icons/lu";
 import { motion } from "motion/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
+import { LuCheck, LuCloud, LuLoader, LuX } from "react-icons/lu";
+import { useGoogleDriveStatus } from "@/hooks/useGoogleDriveStatus";
+import { parseUrlError } from "@/lib/errors";
 import { SettingSection } from "./SettingSection";
 
 interface GoogleDriveSectionProps {
@@ -13,38 +16,26 @@ interface GoogleDriveSectionProps {
 export function GoogleDriveSection({ delay = 0.1 }: GoogleDriveSectionProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [isGoogleDriveConnected, setIsGoogleDriveConnected] = useState(false);
-  const [isCheckingDrive, setIsCheckingDrive] = useState(true);
+  const { isConnected, isChecking, refetch } = useGoogleDriveStatus();
   const [isDisconnecting, setIsDisconnecting] = useState(false);
 
-  // Google Drive 연동 상태 확인
+  // URL 파라미터에서 연결 성공/실패 확인
   useEffect(() => {
-    const checkGoogleDriveStatus = async () => {
-      try {
-        const response = await fetch("/api/drive/status");
-        const data = await response.json();
-        setIsGoogleDriveConnected(data.connected || false);
-      } catch (error) {
-        console.error("Error checking Google Drive status:", error);
-        setIsGoogleDriveConnected(false);
-      } finally {
-        setIsCheckingDrive(false);
-      }
-    };
-
-    checkGoogleDriveStatus();
-
-    // URL 파라미터에서 연결 성공/실패 확인
     const connected = searchParams?.get("connected");
     const error = searchParams?.get("error");
+
     if (connected === "true") {
-      setIsGoogleDriveConnected(true);
+      toast.success("Google Drive가 성공적으로 연동되었습니다");
+      refetch();
       router.replace("/settings");
     } else if (error) {
-      console.error("Google Drive connection error:", error);
+      const errorMessage = parseUrlError(error);
+      if (errorMessage) {
+        toast.error(errorMessage);
+      }
       router.replace("/settings");
     }
-  }, [searchParams, router]);
+  }, [searchParams, router, refetch]);
 
   const handleConnectGoogleDrive = () => {
     window.location.href = "/api/auth/google";
@@ -62,13 +53,14 @@ export function GoogleDriveSection({ delay = 0.1 }: GoogleDriveSectionProps) {
       });
 
       if (response.ok) {
-        setIsGoogleDriveConnected(false);
+        toast.success("Google Drive 연동이 해제되었습니다");
+        refetch();
       } else {
-        alert("연동 해제에 실패했습니다.");
+        toast.error("연동 해제에 실패했습니다");
       }
     } catch (error) {
       console.error("Error disconnecting Google Drive:", error);
-      alert("연동 해제 중 오류가 발생했습니다.");
+      toast.error("연동 해제 중 오류가 발생했습니다");
     } finally {
       setIsDisconnecting(false);
     }
@@ -81,12 +73,14 @@ export function GoogleDriveSection({ delay = 0.1 }: GoogleDriveSectionProps) {
       icon={<LuCloud size={16} />}
       delay={delay}
     >
-      {isCheckingDrive ? (
+      {isChecking ? (
         <div className="flex items-center justify-center py-6">
           <LuLoader className="animate-spin text-neutral-400" size={16} />
-          <span className="ml-2 text-xs text-neutral-400">연동 상태 확인 중...</span>
+          <span className="ml-2 text-xs text-neutral-400">
+            연동 상태 확인 중...
+          </span>
         </div>
-      ) : isGoogleDriveConnected ? (
+      ) : isConnected ? (
         <div className="space-y-3">
           <motion.div
             initial={{ opacity: 0, scale: 0.95 }}

@@ -1,7 +1,7 @@
-export { FadeIn } from "./FadeIn";
-export { SplitText } from "./SplitText";
-export { SlideUp } from "./SlideUp";
 export { AnimatedGradient } from "./AnimatedGradient";
+export { FadeIn } from "./FadeIn";
 export { LiquidEther } from "./LiquidEther";
-export { Particles } from "./Particles";
 export { Orb } from "./Orb";
+export { Particles } from "./Particles";
+export { SlideUp } from "./SlideUp";
+export { SplitText } from "./SplitText";

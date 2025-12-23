@@ -1,9 +1,9 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/clerk";
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: Promise<{ id: string }> }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { userId, supabase } = await requireAdminAuth();
@@ -19,20 +19,17 @@ export async function DELETE(
     if (targetUser?.clerk_user_id === userId) {
       return NextResponse.json(
         { error: "Cannot delete yourself" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
-    const { error } = await supabase
-      .from("admin_users")
-      .delete()
-      .eq("id", id);
+    const { error } = await supabase.from("admin_users").delete().eq("id", id);
 
     if (error) {
       console.error("Database error:", error);
       return NextResponse.json(
         { error: "Failed to delete user" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -41,8 +38,7 @@ export async function DELETE(
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

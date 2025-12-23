@@ -1,6 +1,7 @@
-import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { deleteGoogleDriveToken } from "@/lib/google-drive";
+import { createErrorResponse, logError } from "@/lib/errors";
 
 export async function POST() {
   try {
@@ -8,8 +9,8 @@ export async function POST() {
 
     if (!userId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
+        createErrorResponse("UNAUTHORIZED", 401),
+        { status: 401 },
       );
     }
 
@@ -17,10 +18,10 @@ export async function POST() {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Error disconnecting Google Drive:", error);
+    logError("google-drive:disconnect", error);
     return NextResponse.json(
-      { error: "Failed to disconnect Google Drive" },
-      { status: 500 }
+      createErrorResponse("GOOGLE_DRIVE_DISCONNECT_FAILED", 500, error),
+      { status: 500 },
     );
   }
 }

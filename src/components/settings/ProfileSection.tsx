@@ -1,11 +1,13 @@
 "use client";
 
-import { useUser, useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { AnimatePresence, motion } from "motion/react";
 import { useRouter } from "next/navigation";
-import { LuUser, LuLogIn, LuCloud, LuLogOut } from "react-icons/lu";
-import { motion, AnimatePresence } from "motion/react";
+import { useState } from "react";
+import toast from "react-hot-toast";
+import { LuCloud, LuLogIn, LuLogOut, LuUser } from "react-icons/lu";
+import { useGoogleDriveStatus } from "@/hooks/useGoogleDriveStatus";
 import { SettingSection } from "./SettingSection";
-import { useState, useEffect } from "react";
 
 export function ProfileSection() {
   const { user } = useUser();
@@ -13,27 +15,12 @@ export function ProfileSection() {
   const router = useRouter();
   const [isSwitching, setIsSwitching] = useState(false);
   const [showModal, setShowModal] = useState(false);
-  const [isGoogleDriveConnected, setIsGoogleDriveConnected] = useState(false);
-  const [isCheckingDrive, setIsCheckingDrive] = useState(true);
+  const {
+    isConnected: isGoogleDriveConnected,
+    isChecking: isCheckingDrive,
+    refetch,
+  } = useGoogleDriveStatus();
   const [isDisconnecting, setIsDisconnecting] = useState(false);
-
-  // Google Drive 연동 상태 확인
-  useEffect(() => {
-    const checkGoogleDriveStatus = async () => {
-      try {
-        const response = await fetch("/api/drive/status");
-        const data = await response.json();
-        setIsGoogleDriveConnected(data.connected || false);
-      } catch (error) {
-        console.error("Error checking Google Drive status:", error);
-        setIsGoogleDriveConnected(false);
-      } finally {
-        setIsCheckingDrive(false);
-      }
-    };
-
-    checkGoogleDriveStatus();
-  }, []);
 
   if (!user) return null;
 
@@ -43,7 +30,9 @@ export function ProfileSection() {
 
   const handleClerkAccountSwitch = async () => {
     setShowModal(false);
-    if (!confirm("다른 계정으로 전환하시겠습니까? 현재 세션에서 로그아웃됩니다.")) {
+    if (
+      !confirm("다른 계정으로 전환하시겠습니까? 현재 세션에서 로그아웃됩니다.")
+    ) {
       return;
     }
 
@@ -53,14 +42,14 @@ export function ProfileSection() {
       router.push("/sign-in");
     } catch (error) {
       console.error("Error switching account:", error);
-      alert("계정 전환 중 오류가 발생했습니다.");
+      toast.error("계정 전환 중 오류가 발생했습니다");
       setIsSwitching(false);
     }
   };
 
   const handleGoogleAccountSwitch = async () => {
     setShowModal(false);
-    
+
     if (isGoogleDriveConnected) {
       // 기존 연동 해제 후 재연동
       setIsDisconnecting(true);
@@ -70,18 +59,18 @@ export function ProfileSection() {
         });
 
         if (response.ok) {
-          setIsGoogleDriveConnected(false);
+          toast.success("기존 연동을 해제했습니다. 새 계정으로 연동합니다...");
           // 잠시 후 재연동 시작
           setTimeout(() => {
             window.location.href = "/api/auth/google";
           }, 500);
         } else {
-          alert("연동 해제에 실패했습니다.");
+          toast.error("연동 해제에 실패했습니다");
           setIsDisconnecting(false);
         }
       } catch (error) {
         console.error("Error disconnecting Google Drive:", error);
-        alert("연동 해제 중 오류가 발생했습니다.");
+        toast.error("연동 해제 중 오류가 발생했습니다");
         setIsDisconnecting(false);
       }
     } else {
@@ -100,7 +89,7 @@ export function ProfileSection() {
       router.push("/");
     } catch (error) {
       console.error("Error signing out:", error);
-      alert("로그아웃 중 오류가 발생했습니다.");
+      toast.error("로그아웃 중 오류가 발생했습니다");
     }
   };
 
@@ -121,7 +110,9 @@ export function ProfileSection() {
             />
           ) : (
             <div className="w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-semibold text-sm border-2 border-purple-500">
-              {user.firstName?.[0] || user.emailAddresses?.[0]?.emailAddress?.[0] || "U"}
+              {user.firstName?.[0] ||
+                user.emailAddresses?.[0]?.emailAddress?.[0] ||
+                "U"}
             </div>
           )}
           <div className="flex-1 min-w-0">
@@ -142,7 +133,9 @@ export function ProfileSection() {
           className="flex items-center gap-2 px-3 py-2 rounded-lg bg-neutral-800 hover:bg-neutral-700 transition-colors text-left w-full text-sm disabled:opacity-50 disabled:cursor-not-allowed mb-2"
         >
           <LuLogIn size={14} className="text-neutral-400" />
-          <span>{isSwitching || isDisconnecting ? "전환 중..." : "계정 전환"}</span>
+          <span>
+            {isSwitching || isDisconnecting ? "전환 중..." : "계정 전환"}
+          </span>
         </motion.button>
 
         <motion.button
@@ -190,7 +183,9 @@ export function ProfileSection() {
                   >
                     <LuLogIn size={20} className="text-neutral-400" />
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-white">로그인 계정 전환</div>
+                      <div className="text-sm font-medium text-white">
+                        로그인 계정 전환
+                      </div>
                       <div className="text-xs text-neutral-400 mt-0.5">
                         다른 계정으로 로그인합니다
                       </div>
@@ -206,7 +201,9 @@ export function ProfileSection() {
                   >
                     <LuCloud size={20} className="text-neutral-400" />
                     <div className="flex-1">
-                      <div className="text-sm font-medium text-white">Google 계정 변경</div>
+                      <div className="text-sm font-medium text-white">
+                        Google 계정 변경
+                      </div>
                       <div className="text-xs text-neutral-400 mt-0.5">
                         {isGoogleDriveConnected
                           ? "연결된 Google 계정을 변경합니다"

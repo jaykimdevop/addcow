@@ -1,5 +1,5 @@
-import { LuCheck } from "react-icons/lu";
 import { SignInButton, SignUpButton } from "@clerk/nextjs";
+import { LuCheck } from "react-icons/lu";
 
 export function Pricing() {
   const plans = [
@@ -101,10 +101,7 @@ export function Pricing() {
 
                 <ul className="space-y-4 mb-8">
                   {plan.features.map((feature, featureIndex) => (
-                    <li
-                      key={featureIndex}
-                      className="flex items-start gap-3"
-                    >
+                    <li key={featureIndex} className="flex items-start gap-3">
                       <LuCheck className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
                       <span className="text-gray-700 dark:text-gray-300">
                         {feature}
@@ -137,4 +134,3 @@ export function Pricing() {
     </section>
   );
 }
-

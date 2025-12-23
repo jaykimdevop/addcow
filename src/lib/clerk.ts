@@ -25,7 +25,7 @@ export async function requireAuth() {
  */
 export async function getClerkUser(userId: string) {
   const secretKey = process.env.CLERK_SECRET_KEY;
-  
+
   if (!secretKey) {
     console.error("[getClerkUser] CLERK_SECRET_KEY is not set");
     return null;
@@ -42,15 +42,12 @@ export async function getClerkUser(userId: string) {
 
     if (!response.ok) {
       const errorText = await response.text();
-      console.error(
-        `[getClerkUser] Clerk API error for userId ${userId}:`,
-        {
-          status: response.status,
-          statusText: response.statusText,
-          error: errorText,
-        }
-      );
-      
+      console.error(`[getClerkUser] Clerk API error for userId ${userId}:`, {
+        status: response.status,
+        statusText: response.statusText,
+        error: errorText,
+      });
+
       if (response.status === 404) {
         return null;
       }
@@ -58,7 +55,7 @@ export async function getClerkUser(userId: string) {
     }
 
     const user = await response.json();
-    
+
     if (!user) {
       console.warn(`[getClerkUser] Empty response for userId ${userId}`);
       return null;
@@ -69,11 +66,12 @@ export async function getClerkUser(userId: string) {
       firstName: user.first_name,
       lastName: user.last_name,
       username: user.username,
-      emailAddresses: user.email_addresses?.map((email: any) => ({
-        id: email.id,
-        emailAddress: email.email_address,
-        verification: email.verification,
-      })) || [],
+      emailAddresses:
+        user.email_addresses?.map((email: any) => ({
+          id: email.id,
+          emailAddress: email.email_address,
+          verification: email.verification,
+        })) || [],
       imageUrl: user.image_url,
       createdAt: user.created_at,
       updatedAt: user.updated_at,
@@ -132,4 +130,3 @@ export async function requireAdminAuth() {
 
   return { userId, adminUser, supabase };
 }
-

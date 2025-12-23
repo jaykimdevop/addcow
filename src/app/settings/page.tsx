@@ -1,12 +1,12 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { motion } from "motion/react";
-import { ProfileSection } from "@/components/settings/ProfileSection";
+import { useRouter } from "next/navigation";
+import { CommunicationSettingsSection } from "@/components/settings/CommunicationSettingsSection";
 import { DockSettingsSection } from "@/components/settings/DockSettingsSection";
 import { GoogleDriveSection } from "@/components/settings/GoogleDriveSection";
-import { CommunicationSettingsSection } from "@/components/settings/CommunicationSettingsSection";
+import { ProfileSection } from "@/components/settings/ProfileSection";
 
 export default function SettingsPage() {
   const { user, isLoaded } = useUser();

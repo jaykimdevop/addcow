@@ -33,12 +33,14 @@
 
 html {
   background-color: #060010;
+  overflow-x: hidden;
 }
 
 body {
   background-color: #060010;
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+  overflow-x: hidden;
 }
 
 input::placeholder {

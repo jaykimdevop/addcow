@@ -22,8 +22,8 @@ export function ProductInfo() {
               빠른 시작
             </h3>
             <p className="text-gray-600 dark:text-gray-400">
-              몇 분 안에 설정하고 바로 사용할 수 있습니다. 복잡한 설정 없이
-              즉시 시작하세요.
+              몇 분 안에 설정하고 바로 사용할 수 있습니다. 복잡한 설정 없이 즉시
+              시작하세요.
             </p>
           </div>
 
@@ -57,4 +57,3 @@ export function ProductInfo() {
     </section>
   );
 }
-

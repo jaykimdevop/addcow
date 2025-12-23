@@ -1,15 +1,17 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { LuSettings } from "react-icons/lu";
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { LuSettings } from "react-icons/lu";
 import { SettingSection } from "./SettingSection";
 
 interface DockSettingsSectionProps {
   delay?: number;
 }
 
-export function DockSettingsSection({ delay = 0.05 }: DockSettingsSectionProps) {
+export function DockSettingsSection({
+  delay = 0.05,
+}: DockSettingsSectionProps) {
   const [panelHeight, setPanelHeight] = useState(68);
   const [baseItemSize, setBaseItemSize] = useState(50);
   const [magnification, setMagnification] = useState(70);
@@ -42,7 +44,7 @@ export function DockSettingsSection({ delay = 0.05 }: DockSettingsSectionProps) 
             baseItemSize,
             magnification,
           },
-        })
+        }),
       );
     }
   }, [panelHeight, baseItemSize, magnification]);

@@ -1,6 +1,6 @@
 "use client";
 
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
 import { VscClose } from "react-icons/vsc";
 
 interface DockSettingsProps {
@@ -64,7 +64,9 @@ export function DockSettings({
                   <label className="text-sm font-medium text-white">
                     Background Height
                   </label>
-                  <span className="text-sm text-neutral-400">{panelHeight}</span>
+                  <span className="text-sm text-neutral-400">
+                    {panelHeight}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -82,7 +84,9 @@ export function DockSettings({
                   <label className="text-sm font-medium text-white">
                     Item Size
                   </label>
-                  <span className="text-sm text-neutral-400">{baseItemSize}</span>
+                  <span className="text-sm text-neutral-400">
+                    {baseItemSize}
+                  </span>
                 </div>
                 <input
                   type="range"
@@ -100,14 +104,18 @@ export function DockSettings({
                   <label className="text-sm font-medium text-white">
                     Magnification
                   </label>
-                  <span className="text-sm text-neutral-400">{magnification}</span>
+                  <span className="text-sm text-neutral-400">
+                    {magnification}
+                  </span>
                 </div>
                 <input
                   type="range"
                   min="50"
                   max="120"
                   value={magnification}
-                  onChange={(e) => onMagnificationChange(Number(e.target.value))}
+                  onChange={(e) =>
+                    onMagnificationChange(Number(e.target.value))
+                  }
                   className="w-full h-2 bg-neutral-700 rounded-lg appearance-none cursor-pointer slider"
                 />
               </div>

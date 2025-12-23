@@ -1,6 +1,8 @@
-import { NextResponse } from "next/server";
 import { auth } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 import { getGoogleDriveToken } from "@/lib/google-drive";
+import { createErrorResponse, logError } from "@/lib/errors";
+import type { DriveStatusResponse } from "@/types/api";
 
 export async function GET() {
   try {
@@ -8,26 +10,26 @@ export async function GET() {
 
     if (!userId) {
       return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
+        createErrorResponse("UNAUTHORIZED", 401),
+        { status: 401 },
       );
     }
 
     const tokenData = await getGoogleDriveToken(userId);
 
     if (!tokenData) {
-      return NextResponse.json({ connected: false });
+      return NextResponse.json<DriveStatusResponse>({ connected: false });
     }
 
-    return NextResponse.json({
+    return NextResponse.json<DriveStatusResponse>({
       connected: true,
       connectedAt: tokenData.created_at,
     });
   } catch (error) {
-    console.error("Error checking Google Drive status:", error);
+    logError("google-drive:status", error);
     return NextResponse.json(
-      { error: "Failed to check Google Drive status" },
-      { status: 500 }
+      createErrorResponse("GOOGLE_DRIVE_STATUS_CHECK_FAILED", 500, error),
+      { status: 500 },
     );
   }
 }

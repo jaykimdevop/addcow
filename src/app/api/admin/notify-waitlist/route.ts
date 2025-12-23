@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { requireAdminAuth } from "@/lib/clerk";
-import { sendEmail, generateMVPNotificationEmail } from "@/lib/email";
+import { generateMVPNotificationEmail, sendEmail } from "@/lib/email";
 
 export async function POST(request: NextRequest) {
   try {
@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
       console.error("Database error:", fetchError);
       return NextResponse.json(
         { error: "Failed to fetch submissions" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -58,7 +58,7 @@ export async function POST(request: NextRequest) {
         errors.push(
           `Failed to send to ${submission.email}: ${
             error instanceof Error ? error.message : "Unknown error"
-          }`
+          }`,
         );
         console.error(`Failed to notify ${submission.email}:`, error);
       }
@@ -75,8 +75,7 @@ export async function POST(request: NextRequest) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

@@ -1,4 +1,7 @@
-import { LuUsers, LuTrendingUp, LuCalendar, LuMail } from "react-icons/lu";
+"use client";
+
+import { motion } from "motion/react";
+import { LuCalendar, LuMail, LuTrendingUp, LuUsers } from "react-icons/lu";
 
 interface StatsCardsProps {
   total: number;
@@ -10,25 +13,25 @@ interface StatsCardsProps {
 export function StatsCards({ total, today, week, month }: StatsCardsProps) {
   const stats = [
     {
-      label: "Total Submissions",
+      label: "전체 제출",
       value: total.toLocaleString(),
       icon: LuUsers,
       color: "blue",
     },
     {
-      label: "Today",
+      label: "오늘",
       value: today.toLocaleString(),
       icon: LuMail,
       color: "green",
     },
     {
-      label: "This Week",
+      label: "이번 주",
       value: week.toLocaleString(),
       icon: LuTrendingUp,
       color: "purple",
     },
     {
-      label: "This Month",
+      label: "이번 달",
       value: month.toLocaleString(),
       icon: LuCalendar,
       color: "orange",
@@ -36,40 +39,44 @@ export function StatsCards({ total, today, week, month }: StatsCardsProps) {
   ];
 
   const colorClasses = {
-    blue: "bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400",
-    green: "bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400",
-    purple: "bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400",
-    orange: "bg-orange-100 dark:bg-orange-900/30 text-orange-600 dark:text-orange-400",
+    blue: "bg-blue-900/30 text-blue-400",
+    green: "bg-green-900/30 text-green-400",
+    purple: "bg-purple-900/30 text-purple-400",
+    orange: "bg-orange-900/30 text-orange-400",
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-      {stats.map((stat) => {
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+      {stats.map((stat, index) => {
         const Icon = stat.icon;
         return (
-          <div
+          <motion.div
             key={stat.label}
-            className="p-6 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700"
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{
+              type: "spring",
+              mass: 0.5,
+              stiffness: 200,
+              damping: 20,
+              delay: index * 0.05,
+            }}
+            className="p-4 rounded-2xl bg-[#060010] border border-neutral-700"
           >
-            <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center justify-between mb-3">
               <div
-                className={`p-3 rounded-lg ${colorClasses[stat.color as keyof typeof colorClasses]}`}
+                className={`p-2 rounded-lg ${colorClasses[stat.color as keyof typeof colorClasses]}`}
               >
-                <Icon className="w-6 h-6" />
+                <Icon className="w-4 h-4" />
               </div>
             </div>
             <div className="space-y-1">
-              <p className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {stat.value}
-              </p>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
-                {stat.label}
-              </p>
+              <p className="text-lg font-bold text-white">{stat.value}</p>
+              <p className="text-xs text-neutral-400">{stat.label}</p>
             </div>
-          </div>
+          </motion.div>
         );
       })}
     </div>
   );
 }
-

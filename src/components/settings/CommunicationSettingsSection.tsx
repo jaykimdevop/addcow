@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { LuMessageSquare, LuVolume2, LuChevronDown } from "react-icons/lu";
-import { motion, AnimatePresence } from "motion/react";
+import { AnimatePresence, motion } from "motion/react";
+import { useEffect, useRef, useState } from "react";
+import { LuChevronDown, LuMessageSquare, LuVolume2 } from "react-icons/lu";
 import { SettingSection } from "./SettingSection";
 
 interface CommunicationSettingsSectionProps {
@@ -14,8 +14,7 @@ type CommunicationType = "text" | "audio";
 export function CommunicationSettingsSection({
   delay = 0.2,
 }: CommunicationSettingsSectionProps) {
-  const [selectedType, setSelectedType] =
-    useState<CommunicationType>("text");
+  const [selectedType, setSelectedType] = useState<CommunicationType>("text");
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -32,7 +31,8 @@ export function CommunicationSettingsSection({
     },
   ];
 
-  const selectedOption = options.find((opt) => opt.type === selectedType) || options[0];
+  const selectedOption =
+    options.find((opt) => opt.type === selectedType) || options[0];
 
   const handleSelect = (type: CommunicationType) => {
     setSelectedType(type);
@@ -71,10 +71,7 @@ export function CommunicationSettingsSection({
           onClick={() => setIsOpen(!isOpen)}
           className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg bg-neutral-800 hover:bg-neutral-700 border border-neutral-700 transition-colors text-left"
         >
-          <selectedOption.icon
-            size={18}
-            className="text-white"
-          />
+          <selectedOption.icon size={18} className="text-white" />
           <span className="text-sm font-medium text-white flex-1">
             {selectedOption.label}
           </span>
@@ -111,10 +108,7 @@ export function CommunicationSettingsSection({
                         : "text-white hover:bg-neutral-800"
                     }`}
                   >
-                    <Icon
-                      size={18}
-                      className="text-white"
-                    />
+                    <Icon size={18} className="text-white" />
                     <span className="text-sm font-medium flex-1">
                       {option.label}
                     </span>
@@ -128,4 +122,3 @@ export function CommunicationSettingsSection({
     </SettingSection>
   );
 }
-

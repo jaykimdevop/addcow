@@ -21,21 +21,19 @@ export async function getSiteMode(): Promise<SiteMode> {
 
 export async function setSiteMode(
   mode: SiteMode,
-  updatedBy?: string
+  updatedBy?: string,
 ): Promise<void> {
   const supabase = await createServiceClient();
-  const { error } = await supabase
-    .from("site_settings")
-    .upsert(
-      {
-        key: "site_mode",
-        value: mode,
-        updated_by: updatedBy || null,
-      },
-      {
-        onConflict: "key",
-      }
-    );
+  const { error } = await supabase.from("site_settings").upsert(
+    {
+      key: "site_mode",
+      value: mode,
+      updated_by: updatedBy || null,
+    },
+    {
+      onConflict: "key",
+    },
+  );
 
   if (error) {
     throw new Error(`Failed to update site mode: ${error.message}`);
@@ -43,7 +41,7 @@ export async function setSiteMode(
 }
 
 export async function getSiteSetting<T = unknown>(
-  key: string
+  key: string,
 ): Promise<T | null> {
   const supabase = await createServiceClient();
   const { data, error } = await supabase
@@ -62,24 +60,21 @@ export async function getSiteSetting<T = unknown>(
 export async function setSiteSetting<T = unknown>(
   key: string,
   value: T,
-  updatedBy?: string
+  updatedBy?: string,
 ): Promise<void> {
   const supabase = await createServiceClient();
-  const { error } = await supabase
-    .from("site_settings")
-    .upsert(
-      {
-        key,
-        value: value as unknown,
-        updated_by: updatedBy || null,
-      },
-      {
-        onConflict: "key",
-      }
-    );
+  const { error } = await supabase.from("site_settings").upsert(
+    {
+      key,
+      value: value as unknown,
+      updated_by: updatedBy || null,
+    },
+    {
+      onConflict: "key",
+    },
+  );
 
   if (error) {
     throw new Error(`Failed to update site setting: ${error.message}`);
   }
 }
-

@@ -1,10 +1,10 @@
-import { ProductInfo } from "@/components/mvp/ProductInfo";
+import { redirect } from "next/navigation";
+import { ContactForm } from "@/components/mvp/ContactForm";
 import { FeatureDemo } from "@/components/mvp/FeatureDemo";
 import { Pricing } from "@/components/mvp/Pricing";
-import { ContactForm } from "@/components/mvp/ContactForm";
+import { ProductInfo } from "@/components/mvp/ProductInfo";
 import { UserRegistration } from "@/components/mvp/UserRegistration";
 import { getSiteMode } from "@/lib/site-settings";
-import { redirect } from "next/navigation";
 
 export default async function AddCowPage() {
   const siteMode = await getSiteMode();

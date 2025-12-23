@@ -1,6 +1,6 @@
 "use client";
 
-import { motion } from "framer-motion";
+import { motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 interface SplitTextProps {
@@ -41,7 +41,7 @@ export function SplitText({
               }}
               transition={{
                 duration,
-                delay: delay + (index * 0.1) + (charIndex * 0.03),
+                delay: delay + index * 0.1 + charIndex * 0.03,
                 ease: "easeOut",
               }}
               className="inline-block"

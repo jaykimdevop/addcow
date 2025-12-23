@@ -1,12 +1,12 @@
 "use client";
 
 import { useUser } from "@clerk/nextjs";
+import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { GoogleDriveFiles } from "@/components/upload/GoogleDriveFiles";
-import { FileUpload } from "@/components/upload/FileUpload";
 import { LuCloud, LuUpload } from "react-icons/lu";
+import { FileUpload } from "@/components/upload/FileUpload";
+import { GoogleDriveFiles } from "@/components/upload/GoogleDriveFiles";
 
 export default function UploadPage() {
   const { user, isLoaded } = useUser();

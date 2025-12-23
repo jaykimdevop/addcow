@@ -1,8 +1,8 @@
-import { redirect } from "next/navigation";
 import { currentUser } from "@clerk/nextjs/server";
-import { getSiteMode } from "@/lib/site-settings";
-import { checkIsAdmin } from "@/lib/clerk";
+import { redirect } from "next/navigation";
 import { HomeClient } from "@/components/HomeClient";
+import { checkIsAdmin } from "@/lib/clerk";
+import { getSiteMode } from "@/lib/site-settings";
 
 export default async function Home() {
   const siteMode = await getSiteMode();

@@ -1,11 +1,12 @@
+import { koKR } from "@clerk/localizations";
+import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
-import { koKR } from "@clerk/localizations";
 import Script from "next/script";
 import "./globals.css";
-import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 import { GlobalDock } from "@/components/GlobalDock";
+import { ToastProvider } from "@/components/ToastProvider";
+import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -35,12 +36,16 @@ export default function RootLayout({
           unsafe_disableDevelopmentModeWarnings: true,
         },
         variables: {
-          colorBackground: '#060010',
-          colorPrimary: '#9333ea',
+          colorBackground: "#060010",
+          colorPrimary: "#9333ea",
         },
       }}
     >
-      <html lang="ko" suppressHydrationWarning style={{ backgroundColor: '#060010' }}>
+      <html
+        lang="ko"
+        suppressHydrationWarning
+        style={{ backgroundColor: "#060010" }}
+      >
         <head>
           {/* Google Tag Manager */}
           {GTM_CONTAINER_ID && (
@@ -99,6 +104,7 @@ export default function RootLayout({
           )}
           {children}
           <GlobalDock />
+          <ToastProvider />
         </body>
       </html>
     </ClerkProvider>

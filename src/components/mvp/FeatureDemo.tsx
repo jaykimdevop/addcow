@@ -49,9 +49,7 @@ export function FeatureDemo() {
               <div className="aspect-video rounded-lg bg-gradient-to-br from-blue-500 to-purple-600 dark:from-blue-600 dark:to-purple-700 p-8 flex items-center justify-center">
                 <div className="text-center text-white">
                   <h3 className="text-2xl font-bold mb-4">데모 영상</h3>
-                  <p className="text-blue-100">
-                    실제 사용 예시를 확인해보세요
-                  </p>
+                  <p className="text-blue-100">실제 사용 예시를 확인해보세요</p>
                 </div>
               </div>
             </div>
@@ -61,4 +59,3 @@ export function FeatureDemo() {
     </section>
   );
 }
-

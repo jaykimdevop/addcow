@@ -1,6 +1,6 @@
-import { NextRequest, NextResponse } from "next/server";
-import { requireAdminAuth } from "@/lib/clerk";
 import { format } from "date-fns";
+import { type NextRequest, NextResponse } from "next/server";
+import { requireAdminAuth } from "@/lib/clerk";
 
 export async function GET(request: NextRequest) {
   try {
@@ -27,7 +27,7 @@ export async function GET(request: NextRequest) {
       console.error("Database error:", error);
       return NextResponse.json(
         { error: "Failed to fetch data" },
-        { status: 500 }
+        { status: 500 },
       );
     }
 
@@ -41,7 +41,9 @@ export async function GET(request: NextRequest) {
 
     const csvContent = [
       headers.join(","),
-      ...rows.map((row: string[]) => row.map((cell: string) => `"${cell}"`).join(",")),
+      ...rows.map((row: string[]) =>
+        row.map((cell: string) => `"${cell}"`).join(","),
+      ),
     ].join("\n");
 
     return new NextResponse(csvContent, {
@@ -54,8 +56,7 @@ export async function GET(request: NextRequest) {
     console.error("API error:", error);
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

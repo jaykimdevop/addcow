@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { LuMail, LuMessageSquare, LuLoader, LuCheck } from "react-icons/lu";
+import { LuCheck, LuLoader, LuMail, LuMessageSquare } from "react-icons/lu";
 
 export function ContactForm() {
   const [formData, setFormData] = useState({
@@ -36,9 +36,7 @@ export function ContactForm() {
       setIsSuccess(true);
       setFormData({ name: "", email: "", message: "" });
     } catch (err) {
-      setError(
-        err instanceof Error ? err.message : "Failed to send message"
-      );
+      setError(err instanceof Error ? err.message : "Failed to send message");
     } finally {
       setIsLoading(false);
     }
@@ -71,9 +69,7 @@ export function ContactForm() {
           type="text"
           id="name"
           value={formData.name}
-          onChange={(e) =>
-            setFormData({ ...formData, name: e.target.value })
-          }
+          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
           required
           className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
           placeholder="홍길동"
@@ -147,4 +143,3 @@ export function ContactForm() {
     </form>
   );
 }
-

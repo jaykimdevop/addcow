@@ -1,7 +1,11 @@
-import { createServiceClient } from "@/lib/supabase/server";
-import { getSiteMode } from "@/lib/site-settings";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminSection } from "@/components/admin/AdminSection";
 import { SiteModeToggle } from "@/components/admin/SiteModeToggle";
 import { VercelApiTest } from "@/components/admin/VercelApiTest";
+import { LuSettings, LuServer } from "react-icons/lu";
+import { getSiteMode } from "@/lib/site-settings";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export default async function SettingsPage() {
   const supabase = await createServiceClient();
@@ -23,51 +27,59 @@ export default async function SettingsPage() {
     .eq("account_created", true);
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          사이트 설정
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          사이트 모드를 관리하고 MVP 전환을 수행하세요
-        </p>
+    <AdminLayout>
+      <AdminHeader
+        title="설정"
+        description="사이트 모드 및 시스템 설정을 관리하세요"
+      />
+      <div className="space-y-4">
+        <AdminSection
+          title="사이트 모드"
+          description="이메일 수집 모드와 MVP 모드를 전환합니다"
+          icon={<LuSettings size={16} />}
+          delay={0}
+        >
+          <SiteModeToggle currentMode={currentMode} />
+        </AdminSection>
+
+        <AdminSection
+          title="Vercel API 테스트"
+          description="Vercel API 연결 상태를 확인합니다"
+          icon={<LuServer size={16} />}
+          delay={0.05}
+        >
+          <VercelApiTest />
+        </AdminSection>
+
+        <AdminSection
+          title="통계"
+          description="대기자 및 알림 발송 현황을 확인합니다"
+          delay={0.1}
+        >
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="p-4 rounded-lg bg-neutral-900 border border-neutral-700">
+              <div className="text-lg font-bold text-white mb-1">
+                {totalSubmissions || 0}
+              </div>
+              <div className="text-xs text-neutral-400">총 대기자 수</div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-neutral-900 border border-neutral-700">
+              <div className="text-lg font-bold text-white mb-1">
+                {notifiedCount || 0}
+              </div>
+              <div className="text-xs text-neutral-400">알림 발송 완료</div>
+            </div>
+
+            <div className="p-4 rounded-lg bg-neutral-900 border border-neutral-700">
+              <div className="text-lg font-bold text-white mb-1">
+                {accountCreatedCount || 0}
+              </div>
+              <div className="text-xs text-neutral-400">계정 생성 완료</div>
+            </div>
+          </div>
+        </AdminSection>
       </div>
-
-      <SiteModeToggle currentMode={currentMode} />
-
-      {/* Vercel API Test */}
-      <VercelApiTest />
-
-      {/* Statistics */}
-      <div className="grid md:grid-cols-3 gap-6 mt-8">
-        <div className="p-6 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            {totalSubmissions || 0}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            총 대기자 수
-          </div>
-        </div>
-
-        <div className="p-6 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            {notifiedCount || 0}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            알림 발송 완료
-          </div>
-        </div>
-
-        <div className="p-6 rounded-lg bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700">
-          <div className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-            {accountCreatedCount || 0}
-          </div>
-          <div className="text-sm text-gray-600 dark:text-gray-400">
-            계정 생성 완료
-          </div>
-        </div>
-      </div>
-    </div>
+    </AdminLayout>
   );
 }
-

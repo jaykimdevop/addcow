@@ -1,19 +1,19 @@
 "use client";
 
-import { useEffect, useRef } from 'react';
-import { Renderer, Camera, Geometry, Program, Mesh } from 'ogl';
+import { Camera, Geometry, Mesh, Program, Renderer } from "ogl";
+import { useEffect, useRef } from "react";
 
-import './Particles.css';
+import "./Particles.css";
 
-const defaultColors = ['#ffffff', '#ffffff', '#ffffff'];
+const defaultColors = ["#ffffff", "#ffffff", "#ffffff"];
 
 const hexToRgb = (hex: string): [number, number, number] => {
-  hex = hex.replace(/^#/, '');
+  hex = hex.replace(/^#/, "");
   if (hex.length === 3) {
     hex = hex
-      .split('')
-      .map(c => c + c)
-      .join('');
+      .split("")
+      .map((c) => c + c)
+      .join("");
   }
   const int = parseInt(hex, 16);
   const r = ((int >> 16) & 255) / 255;
@@ -136,7 +136,7 @@ export function Particles({
   cameraDistance = 20,
   disableRotation = false,
   pixelRatio = 1,
-  className = '',
+  className = "",
   color, // Legacy support
 }: ParticlesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -149,7 +149,7 @@ export function Particles({
     const renderer = new Renderer({
       dpr: pixelRatio,
       depth: false,
-      alpha: true
+      alpha: true,
     });
     const gl = renderer.gl;
     container.appendChild(gl.canvas);
@@ -164,7 +164,7 @@ export function Particles({
       renderer.setSize(width, height);
       camera.perspective({ aspect: gl.canvas.width / gl.canvas.height });
     };
-    window.addEventListener('resize', resize, false);
+    window.addEventListener("resize", resize, false);
     resize();
 
     const handleMouseMove = (e: MouseEvent) => {
@@ -174,14 +174,19 @@ export function Particles({
     };
 
     if (moveParticlesOnHover) {
-      window.addEventListener('mousemove', handleMouseMove);
+      window.addEventListener("mousemove", handleMouseMove);
     }
 
     const count = particleCount;
     const positions = new Float32Array(count * 3);
     const randoms = new Float32Array(count * 4);
     const colors = new Float32Array(count * 3);
-    const palette = particleColors && particleColors.length > 0 ? particleColors : (color ? [color] : defaultColors);
+    const palette =
+      particleColors && particleColors.length > 0
+        ? particleColors
+        : color
+          ? [color]
+          : defaultColors;
 
     for (let i = 0; i < count; i++) {
       let x, y, z, len;
@@ -193,7 +198,10 @@ export function Particles({
       } while (len > 1 || len === 0);
       const r = Math.cbrt(Math.random());
       positions.set([x * r, y * r, z * r], i * 3);
-      randoms.set([Math.random(), Math.random(), Math.random(), Math.random()], i * 4);
+      randoms.set(
+        [Math.random(), Math.random(), Math.random(), Math.random()],
+        i * 4,
+      );
       const col = hexToRgb(palette[Math.floor(Math.random() * palette.length)]);
       colors.set(col, i * 3);
     }
@@ -201,7 +209,7 @@ export function Particles({
     const geometry = new Geometry(gl, {
       position: { size: 3, data: positions },
       random: { size: 4, data: randoms },
-      color: { size: 3, data: colors }
+      color: { size: 3, data: colors },
     });
 
     const program = new Program(gl, {
@@ -214,10 +222,10 @@ export function Particles({
         uSizeRandomness: { value: sizeRandomness },
         uAlphaParticles: { value: alphaParticles ? 1 : 0 },
         uMouse: { value: [0, 0] },
-        uMouseEnabled: { value: moveParticlesOnHover ? 1 : 0 }
+        uMouseEnabled: { value: moveParticlesOnHover ? 1 : 0 },
       },
       transparent: true,
-      depthTest: false
+      depthTest: false,
     });
 
     const particles = new Mesh(gl, { mode: gl.POINTS, geometry, program });
@@ -235,7 +243,10 @@ export function Particles({
       program.uniforms.uTime.value = elapsed * 0.001;
 
       if (moveParticlesOnHover) {
-        program.uniforms.uMouse.value = [mouseRef.current.x, mouseRef.current.y];
+        program.uniforms.uMouse.value = [
+          mouseRef.current.x,
+          mouseRef.current.y,
+        ];
       }
 
       // No rotation when disabled
@@ -255,9 +266,9 @@ export function Particles({
     animationFrameId = requestAnimationFrame(update);
 
     return () => {
-      window.removeEventListener('resize', resize);
+      window.removeEventListener("resize", resize);
       if (moveParticlesOnHover) {
-        window.removeEventListener('mousemove', handleMouseMove);
+        window.removeEventListener("mousemove", handleMouseMove);
       }
       cancelAnimationFrame(animationFrameId);
       if (container.contains(gl.canvas)) {
@@ -280,5 +291,7 @@ export function Particles({
     color,
   ]);
 
-  return <div ref={containerRef} className={`particles-container ${className}`} />;
+  return (
+    <div ref={containerRef} className={`particles-container ${className}`} />
+  );
 }

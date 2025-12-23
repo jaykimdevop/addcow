@@ -1,12 +1,8 @@
-import { google } from "googleapis";
-import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import { auth } from "@clerk/nextjs/server";
+import { google } from "googleapis";
+import { GOOGLE_DRIVE } from "@/lib/constants";
+import { createClerkSupabaseClient } from "@/lib/supabase/server";
 import type { GoogleDriveTokenData } from "@/types/google-drive";
-
-const SCOPES = [
-  "https://www.googleapis.com/auth/drive.readonly",
-  "https://www.googleapis.com/auth/drive.metadata.readonly",
-];
 
 /**
  * Google OAuth2 클라이언트 생성
@@ -18,7 +14,7 @@ export function createGoogleOAuth2Client() {
 
   if (!clientId || !clientSecret || !redirectUri) {
     throw new Error(
-      "Google OAuth credentials are not configured. Please set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI environment variables."
+      "Google OAuth credentials are not configured. Please set GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, and GOOGLE_REDIRECT_URI environment variables.",
     );
   }
 
@@ -32,7 +28,7 @@ export function getGoogleAuthUrl(state: string): string {
   const oauth2Client = createGoogleOAuth2Client();
   return oauth2Client.generateAuthUrl({
     access_type: "offline",
-    scope: SCOPES,
+    scope: [...GOOGLE_DRIVE.SCOPES],
     state,
     prompt: "consent", // 리프레시 토큰을 받기 위해 필요
   });
@@ -41,9 +37,7 @@ export function getGoogleAuthUrl(state: string): string {
 /**
  * OAuth 코드를 액세스 토큰으로 교환
  */
-export async function exchangeCodeForTokens(
-  code: string
-): Promise<{
+export async function exchangeCodeForTokens(code: string): Promise<{
   access_token: string;
   refresh_token: string;
   expiry_date: number;
@@ -75,9 +69,7 @@ export function isTokenExpired(tokenExpiry: string): boolean {
 /**
  * 리프레시 토큰으로 새 액세스 토큰 발급
  */
-export async function refreshGoogleToken(
-  refreshToken: string
-): Promise<{
+export async function refreshGoogleToken(refreshToken: string): Promise<{
   access_token: string;
   expiry_date: number;
 }> {
@@ -102,7 +94,7 @@ export async function refreshGoogleToken(
  * Supabase에서 사용자의 Google Drive 토큰 조회
  */
 export async function getGoogleDriveToken(
-  clerkUserId: string
+  clerkUserId: string,
 ): Promise<GoogleDriveTokenData | null> {
   const supabase = await createClerkSupabaseClient();
   const { data, error } = await supabase
@@ -125,22 +117,20 @@ export async function saveGoogleDriveToken(
   clerkUserId: string,
   accessToken: string,
   refreshToken: string,
-  tokenExpiry: string
+  tokenExpiry: string,
 ): Promise<void> {
   const supabase = await createClerkSupabaseClient();
-  const { error } = await supabase
-    .from("google_drive_tokens")
-    .upsert(
-      {
-        clerk_user_id: clerkUserId,
-        access_token: accessToken,
-        refresh_token: refreshToken,
-        token_expiry: tokenExpiry,
-      },
-      {
-        onConflict: "clerk_user_id",
-      }
-    );
+  const { error } = await supabase.from("google_drive_tokens").upsert(
+    {
+      clerk_user_id: clerkUserId,
+      access_token: accessToken,
+      refresh_token: refreshToken,
+      token_expiry: tokenExpiry,
+    },
+    {
+      onConflict: "clerk_user_id",
+    },
+  );
 
   if (error) {
     throw new Error(`Failed to save Google Drive token: ${error.message}`);
@@ -151,7 +141,7 @@ export async function saveGoogleDriveToken(
  * Google Drive 토큰 삭제
  */
 export async function deleteGoogleDriveToken(
-  clerkUserId: string
+  clerkUserId: string,
 ): Promise<void> {
   const supabase = await createClerkSupabaseClient();
   const { error } = await supabase
@@ -193,7 +183,7 @@ export async function getGoogleDriveClient() {
       userId,
       accessToken,
       tokenData.refresh_token,
-      tokenExpiry
+      tokenExpiry,
     );
   }
 

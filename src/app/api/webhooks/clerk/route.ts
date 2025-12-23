@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { createServiceClient } from "@/lib/supabase/server";
 import { sendWebhookNotification } from "@/lib/webhooks/notifications";
@@ -13,7 +13,9 @@ const REQUIRED_ENV_VARS = [
 function validateEnvVars() {
   const missing = REQUIRED_ENV_VARS.filter((key) => !process.env[key]);
   if (missing.length > 0) {
-    throw new Error(`Missing required environment variables: ${missing.join(", ")}`);
+    throw new Error(
+      `Missing required environment variables: ${missing.join(", ")}`,
+    );
   }
 }
 
@@ -34,7 +36,7 @@ export async function POST(request: NextRequest) {
     if (!svixId || !svixTimestamp || !svixSignature) {
       return NextResponse.json(
         { error: "Missing svix headers" },
-        { status: 400 }
+        { status: 400 },
       );
     }
 
@@ -78,10 +80,7 @@ export async function POST(request: NextRequest) {
     } catch (err) {
       const errorMsg = err instanceof Error ? err.message : "Unknown error";
       console.error("Webhook verification failed:", errorMsg);
-      return NextResponse.json(
-        { error: "Invalid signature" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
 
     // Get Supabase client
@@ -110,8 +109,9 @@ export async function POST(request: NextRequest) {
     switch (evt.type) {
       case "user.created": {
         // Auto-add new users to admin_users table with 'viewer' role
-        const primaryEmail = evt.data.email_addresses?.[0]?.email_address || null;
-        
+        const primaryEmail =
+          evt.data.email_addresses?.[0]?.email_address || null;
+
         const { error: insertError } = await supabase
           .from("admin_users")
           .insert({
@@ -139,7 +139,7 @@ export async function POST(request: NextRequest) {
 
             return NextResponse.json(
               { error: "Failed to create admin user" },
-              { status: 500 }
+              { status: 500 },
             );
           }
         }
@@ -163,8 +163,9 @@ export async function POST(request: NextRequest) {
 
       case "user.updated": {
         // Update user information when Clerk user is updated
-        const primaryEmail = evt.data.email_addresses?.[0]?.email_address || null;
-        
+        const primaryEmail =
+          evt.data.email_addresses?.[0]?.email_address || null;
+
         const { error: updateError } = await supabase
           .from("admin_users")
           .update({
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
 
           return NextResponse.json(
             { error: "Failed to update admin user" },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -226,7 +227,7 @@ export async function POST(request: NextRequest) {
 
           return NextResponse.json(
             { error: "Failed to delete admin user" },
-            { status: 500 }
+            { status: 500 },
           );
         }
 
@@ -268,8 +269,7 @@ export async function POST(request: NextRequest) {
     }
     return NextResponse.json(
       { error: "Internal server error" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

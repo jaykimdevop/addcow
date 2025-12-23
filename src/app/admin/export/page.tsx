@@ -1,114 +1,24 @@
-"use client";
+import { AdminHeader } from "@/components/admin/AdminHeader";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { AdminSection } from "@/components/admin/AdminSection";
+import { ExportForm } from "@/components/admin/ExportForm";
+import { LuFileDown } from "react-icons/lu";
 
-import { useState } from "react";
-import { LuDownload, LuLoader, LuCalendar } from "react-icons/lu";
-import { format, subDays } from "date-fns";
-
-export default function ExportPage() {
-  const [startDate, setStartDate] = useState(
-    format(subDays(new Date(), 30), "yyyy-MM-dd")
-  );
-  const [endDate, setEndDate] = useState(format(new Date(), "yyyy-MM-dd"));
-  const [isExporting, setIsExporting] = useState(false);
-
-  const handleExport = async () => {
-    setIsExporting(true);
-    try {
-      const params = new URLSearchParams({
-        start: startDate,
-        end: endDate,
-      });
-
-      const response = await fetch(`/api/admin/export?${params.toString()}`);
-      if (!response.ok) {
-        throw new Error("Failed to export data");
-      }
-
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = `submissions-${startDate}-to-${endDate}.csv`;
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      alert("Failed to export data");
-    } finally {
-      setIsExporting(false);
-    }
-  };
-
+export default async function ExportPage() {
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-          Export Data
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400 mt-2">
-          Export submissions data as CSV
-        </p>
-      </div>
-
-      <div className="p-6 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 max-w-2xl">
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Date Range
-            </label>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  Start Date
-                </label>
-                <div className="relative">
-                  <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="date"
-                    value={startDate}
-                    onChange={(e) => setStartDate(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  />
-                </div>
-              </div>
-              <div>
-                <label className="block text-xs text-gray-500 dark:text-gray-400 mb-1">
-                  End Date
-                </label>
-                <div className="relative">
-                  <LuCalendar className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <input
-                    type="date"
-                    value={endDate}
-                    onChange={(e) => setEndDate(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <button
-            onClick={handleExport}
-            disabled={isExporting || !startDate || !endDate}
-            className="w-full py-3 px-6 rounded-lg bg-blue-600 dark:bg-blue-500 text-white font-medium hover:bg-blue-700 dark:hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center justify-center gap-2"
-          >
-            {isExporting ? (
-              <>
-                <LuLoader className="w-5 h-5 animate-spin" />
-                Exporting...
-              </>
-            ) : (
-              <>
-                <LuDownload className="w-5 h-5" />
-                Export CSV
-              </>
-            )}
-          </button>
-        </div>
-      </div>
-    </div>
+    <AdminLayout>
+      <AdminHeader
+        title="데이터 내보내기"
+        description="제출 데이터를 CSV 파일로 내보냅니다"
+      />
+      <AdminSection
+        title="CSV 내보내기"
+        description="날짜 범위를 선택하여 제출 데이터를 내보냅니다"
+        icon={<LuFileDown size={16} />}
+        delay={0}
+      >
+        <ExportForm />
+      </AdminSection>
+    </AdminLayout>
   );
 }
-

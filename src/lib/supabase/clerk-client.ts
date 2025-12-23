@@ -1,7 +1,7 @@
 "use client";
 
-import { createClient } from "@supabase/supabase-js";
 import { useAuth } from "@clerk/nextjs";
+import { createClient } from "@supabase/supabase-js";
 import { useMemo } from "react";
 
 /**
@@ -46,5 +46,3 @@ export function useClerkSupabaseClient() {
 
   return supabase;
 }
-
-
