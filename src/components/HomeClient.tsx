@@ -5,7 +5,6 @@ import { AnimatePresence, motion } from "motion/react";
 import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { HeroSection } from "@/components/HeroSection";
-import type { SiteMode } from "@/lib/site-settings";
 
 // Orb 컴포넌트를 dynamic import로 최적화 (WebGL ~50KB)
 const Orb = dynamic(() => import("@/components/react-bits").then((mod) => ({ default: mod.Orb })), {
@@ -15,12 +14,7 @@ const Orb = dynamic(() => import("@/components/react-bits").then((mod) => ({ def
   ),
 });
 
-interface HomeClientProps {
-  isAdmin: boolean;
-  siteMode: SiteMode;
-}
-
-export function HomeClient({ isAdmin, siteMode }: HomeClientProps) {
+export function HomeClient() {
   const { isSignedIn, isLoaded } = useUser();
   const [showOrb, setShowOrb] = useState(true);
   const [orbAnimating, setOrbAnimating] = useState(false);
@@ -131,7 +125,7 @@ export function HomeClient({ isAdmin, siteMode }: HomeClientProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      <HeroSection isAdmin={isAdmin} showContent={showContent} siteMode={siteMode} />
+      <HeroSection showContent={showContent} />
     </div>
   );
 }

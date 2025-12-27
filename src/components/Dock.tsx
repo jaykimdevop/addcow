@@ -24,6 +24,7 @@ export type DockItemData = {
   onClick: () => void;
   className?: string;
   isActive?: boolean;
+  disabled?: boolean;
 };
 
 export type DockProps = {
@@ -49,6 +50,7 @@ type DockItemProps = {
   baseItemSize: number;
   magnification: number;
   isActive?: boolean;
+  disabled?: boolean;
 };
 
 function DockItem({
@@ -61,6 +63,7 @@ function DockItem({
   magnification,
   baseItemSize,
   isActive = false,
+  disabled = false,
 }: DockItemProps) {
   const ref = useRef<HTMLDivElement>(null);
   const isHovered = useMotionValue(0);
@@ -97,9 +100,9 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={handleClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border shadow-md cursor-pointer pointer-events-auto ${
-        isActive ? "border-purple-500" : "border-neutral-700"
-      } ${className}`}
+      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border shadow-md pointer-events-auto ${
+        disabled ? "opacity-50 cursor-default" : "cursor-pointer"
+      } ${isActive ? "border-purple-500" : "border-neutral-700"} ${className}`}
       tabIndex={0}
       role="button"
       aria-haspopup="true"
@@ -226,6 +229,7 @@ export default function Dock({
             magnification={magnification}
             baseItemSize={baseItemSize}
             isActive={item.isActive}
+            disabled={item.disabled}
           >
             <DockIcon>{item.icon}</DockIcon>
             <DockLabel>{item.label}</DockLabel>

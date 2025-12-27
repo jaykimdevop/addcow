@@ -11,28 +11,43 @@ export function ToastProvider() {
   return (
     <Toaster
       position="top-center"
+      containerStyle={{
+        top: "50%",
+        transform: "translateY(-50%)",
+      }}
       reverseOrder={false}
       gutter={8}
       toastOptions={{
-        duration: 4000,
+        duration: 2500,
         style: {
-          background: "#363636",
+          background: "rgba(6, 0, 16, 0.95)",
           color: "#fff",
-          borderRadius: "8px",
-          padding: "12px 16px",
+          borderRadius: "16px",
+          padding: "16px 24px",
+          border: "1px solid rgba(124, 77, 212, 0.3)",
+          backdropFilter: "blur(12px)",
+          boxShadow: "0 8px 32px rgba(124, 77, 212, 0.2)",
+          fontSize: "14px",
+          fontWeight: "500",
         },
         success: {
-          duration: 3000,
+          duration: 2500,
           iconTheme: {
-            primary: "#10b981",
+            primary: "#7c4dd4",
             secondary: "#fff",
+          },
+          style: {
+            border: "1px solid rgba(124, 77, 212, 0.5)",
           },
         },
         error: {
-          duration: 5000,
+          duration: 4000,
           iconTheme: {
             primary: "#ef4444",
             secondary: "#fff",
+          },
+          style: {
+            border: "1px solid rgba(239, 68, 68, 0.5)",
           },
         },
       }}

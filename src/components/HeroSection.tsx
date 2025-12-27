@@ -4,15 +4,12 @@ import { useUser } from "@clerk/nextjs";
 import { LuSparkles } from "react-icons/lu";
 import { EmailCollector } from "@/components/EmailCollector";
 import { FadeIn, SplitText } from "@/components/react-bits";
-import type { SiteMode } from "@/lib/site-settings";
 
 interface HeroSectionProps {
-  isAdmin: boolean;
   showContent?: boolean;
-  siteMode: SiteMode;
 }
 
-export function HeroSection({ isAdmin, showContent = true, siteMode }: HeroSectionProps) {
+export function HeroSection({ showContent = true }: HeroSectionProps) {
   const { isSignedIn, isLoaded } = useUser();
 
   return (
@@ -58,7 +55,7 @@ export function HeroSection({ isAdmin, showContent = true, siteMode }: HeroSecti
           <div className="mt-4 min-h-[80px] flex items-start justify-center">
             <FadeIn delay={0.8} duration={0.6}>
               <div className="pointer-events-auto">
-                <EmailCollector siteMode={siteMode} />
+                <EmailCollector />
               </div>
             </FadeIn>
           </div>

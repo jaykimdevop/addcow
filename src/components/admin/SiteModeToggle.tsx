@@ -88,8 +88,8 @@ export function SiteModeToggle({ currentMode }: SiteModeToggleProps) {
           </h3>
           <p className="text-xs text-neutral-400">
             {currentMode === "faked_door"
-              ? "FD 모드: 대기자 등록만 가능합니다"
-              : "MVP 모드: 로그인 및 회원가입이 가능합니다"}
+              ? "FD 모드: 테스트 모드입니다"
+              : "MVP 모드: 실제 서비스 모드입니다"}
           </p>
         </div>
 

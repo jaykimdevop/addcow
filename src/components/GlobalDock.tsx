@@ -3,12 +3,11 @@
 import { useUser } from "@clerk/nextjs";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import {
-  LuDownload,
   LuFileText,
   LuLayoutDashboard,
   LuSettings,
-  LuUsers,
 } from "react-icons/lu";
 import {
   VscCloudUpload,
@@ -132,6 +131,32 @@ export function GlobalDock({ initialIsAdmin = false, initialRole = null }: Globa
     return null;
   }
 
+  // 준비 중 토스트 표시
+  const showComingSoon = (label: string) => {
+    toast(
+      (t) => (
+        <div className="flex items-center gap-3">
+          <div className="w-10 h-10 rounded-full bg-purple-500/20 flex items-center justify-center flex-shrink-0">
+            <span className="text-lg">🚧</span>
+          </div>
+          <div>
+            <p className="font-medium text-white">{label}</p>
+            <p className="text-xs text-neutral-400 mt-0.5">이 기능은 준비 중입니다</p>
+          </div>
+        </div>
+      ),
+      {
+        duration: 2500,
+        style: {
+          background: "rgba(6, 0, 16, 0.95)",
+          border: "1px solid rgba(124, 77, 212, 0.3)",
+          borderRadius: "16px",
+          padding: "12px 16px",
+        },
+      }
+    );
+  };
+
   // 각 Dock 아이템의 경로 매핑
   const baseDockItems = [
     {
@@ -144,19 +169,22 @@ export function GlobalDock({ initialIsAdmin = false, initialRole = null }: Globa
       icon: <VscGitCommit size={18} className="text-white" />,
       label: "노드",
       path: "/node",
-      onClick: () => router.push("/node"),
+      onClick: () => showComingSoon("노드"),
+      disabled: true,
     },
     {
       icon: <VscFiles size={18} className="text-white" />,
       label: "작업물",
       path: "/asset",
-      onClick: () => router.push("/asset"),
+      onClick: () => showComingSoon("작업물"),
+      disabled: true,
     },
     {
       icon: <VscCloudUpload size={18} className="text-white" />,
       label: "업로드",
       path: "/knowledge",
-      onClick: () => router.push("/knowledge"),
+      onClick: () => showComingSoon("업로드"),
+      disabled: true,
     },
   ];
 
@@ -233,10 +261,12 @@ export function GlobalDock({ initialIsAdmin = false, initialRole = null }: Globa
   // Local Dock용 활성화 체크 (루트 경로는 정확히 일치할 때만)
   const isLocalDockActive = (href: string, rootPath: string) => {
     if (!pathname) return false;
-    if (href === rootPath) {
+    // 쿼리 파라미터 제거하여 pathname만 추출
+    const hrefPath = href.split("?")[0];
+    if (hrefPath === rootPath) {
       return pathname === rootPath;
     }
-    return pathname === href || pathname.startsWith(href + "/");
+    return pathname === hrefPath || pathname.startsWith(hrefPath + "/");
   };
 
   // ============================================================
