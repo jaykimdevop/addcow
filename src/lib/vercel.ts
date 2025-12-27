@@ -217,3 +217,111 @@ export async function getTeams() {
     }>;
   }>(`/v2/teams`);
 }
+
+/**
+ * 새 배포 생성 (GitHub에서 최신 코드로 배포)
+ * @param projectId - Project ID 또는 프로젝트 이름
+ * @param params - 배포 옵션
+ */
+export async function createDeployment(params: {
+  projectId: string;
+  target?: "production" | "preview";
+  gitSource?: {
+    type: "github";
+    org: string;
+    repo: string;
+    ref?: string; // branch name or commit SHA
+  };
+}) {
+  const body: Record<string, unknown> = {
+    name: params.projectId,
+    target: params.target || "production",
+  };
+
+  if (params.gitSource) {
+    body.gitSource = params.gitSource;
+  }
+
+  return fetchVercelAPI<{
+    id: string;
+    url: string;
+    name: string;
+    state: "BUILDING" | "ERROR" | "INITIALIZING" | "QUEUED" | "READY" | "CANCELED";
+    createdAt: number;
+    readyState: string;
+  }>("/v13/deployments", {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+}
+
+/**
+ * 프로젝트 재배포 (Vercel 대시보드의 Redeploy 기능)
+ * 가장 최근 production 배포를 기반으로 재배포
+ * @param projectId - Project ID
+ */
+export async function redeployProject(projectId: string) {
+  // 먼저 최근 배포 목록에서 production 배포 찾기
+  const { deployments } = await getDeployments({ 
+    projectId, 
+    limit: 10 
+  });
+  
+  const productionDeployment = deployments.find(d => d.target === "production" && d.state === "READY");
+  
+  if (!productionDeployment) {
+    throw new Error("No production deployment found to redeploy");
+  }
+
+  // 해당 배포를 재배포
+  return fetchVercelAPI<{
+    id: string;
+    url: string;
+    name: string;
+    state: "BUILDING" | "ERROR" | "INITIALIZING" | "QUEUED" | "READY" | "CANCELED";
+    createdAt: number;
+  }>(`/v13/deployments?forceNew=1`, {
+    method: "POST",
+    body: JSON.stringify({
+      name: productionDeployment.name,
+      deploymentId: productionDeployment.uid,
+      target: "production",
+    }),
+  });
+}
+
+/**
+ * GitHub 저장소에서 최신 코드로 production 배포
+ * @param org - GitHub organization 또는 username
+ * @param repo - Repository name
+ * @param branch - Branch name (기본값: main)
+ */
+export async function deployFromGitHub(params: {
+  org: string;
+  repo: string;
+  branch?: string;
+  projectName?: string;
+}) {
+  const { org, repo, branch = "main", projectName } = params;
+  
+  return fetchVercelAPI<{
+    id: string;
+    url: string;
+    name: string;
+    state: "BUILDING" | "ERROR" | "INITIALIZING" | "QUEUED" | "READY" | "CANCELED";
+    createdAt: number;
+    readyState: string;
+  }>("/v13/deployments", {
+    method: "POST",
+    body: JSON.stringify({
+      name: projectName || repo,
+      target: "production",
+      gitSource: {
+        type: "github",
+        org,
+        repo,
+        ref: branch,
+      },
+    }),
+  });
+}
