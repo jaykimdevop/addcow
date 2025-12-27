@@ -95,19 +95,19 @@ export function HomeClient() {
         {showOrb && isLoaded && (!isSignedIn || orbAnimating) && (
           <motion.div
             className="absolute inset-0 z-0 flex items-center justify-center"
-            initial={{ scale: orbScale, opacity: 1, y: '-8vh' }}
+            initial={{ scale: orbScale, opacity: 1, y: '0vh' }}
             animate={
               orbAnimating
                 ? {
                     scale: orbScale * 3,
                     opacity: 0,
                     rotate: 360,
-                    y: '-8vh',
+                    y: '0vh',
                   }
                 : {
                     scale: orbScale,
                     opacity: 1,
-                    y: '-8vh',
+                    y: '0vh',
                   }
             }
             exit={{ opacity: 0 }}
