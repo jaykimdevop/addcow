@@ -75,7 +75,7 @@ export function HomeClient() {
       style={{ backgroundColor: "#060010" }}
     >
       {!isLoaded && (
-        <div className="fixed inset-0 flex items-center justify-center z-50">
+        <div className="absolute inset-0 flex items-center justify-center z-50">
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -94,7 +94,7 @@ export function HomeClient() {
       <AnimatePresence>
         {showOrb && isLoaded && (!isSignedIn || orbAnimating) && (
           <motion.div
-            className="fixed inset-0 z-0 flex items-center justify-center"
+            className="absolute inset-0 z-0 flex items-center justify-center"
             initial={{ scale: orbScale, opacity: 1, y: '-8vh' }}
             animate={
               orbAnimating
