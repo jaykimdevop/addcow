@@ -75,6 +75,7 @@ ADDCOW RAG 서비스를 위한 랜딩 페이지와 관리자 대시보드입니�
 - **프로필 메뉴**: 사용자 정보 및 설정
 - **Google Drive 연동**: 파일 업로드 및 관리
 - **설정 페이지**: 통신 설정, Dock 설정 등
+- **Google OAuth 로그인**: Google 계정으로 간편 로그인 (SSO 콜백 처리)
 
 ### 3. 관리자 대시보드 (`/admin`)
 
@@ -89,10 +90,12 @@ ADDCOW RAG 서비스를 위한 랜딩 페이지와 관리자 대시보드입니�
 - **CSV 내보내기**: 선택한 기간 데이터 다운로드
 
 #### 사용자 관리 (`/admin/users`)
+- **탭 기반 UI**: 제출 데이터와 사용자 관리 탭으로 구분
 - **관리자 목록**: 모든 관리자 사용자 조회
 - **사용자 추가**: Clerk User ID로 새 관리자 추가
 - **권한 관리**: admin/viewer 역할 할당
 - **사용자 삭제**: 관리자 제거 (자기 자신 제외)
+- **통합 관리**: 제출 데이터와 사용자 관리를 한 페이지에서 처리
 
 #### 설정 (`/admin/settings`)
 - **사이트 모드**: 대기자 수집 모드 ↔ MVP 모드 전환
@@ -110,11 +113,13 @@ ADDCOW RAG 서비스를 위한 랜딩 페이지와 관리자 대시보드입니�
 - **사이트 모드가 'mvp'일 때만 접근 가능**
 
 ### 5. API 기능
-- **이메일 제출**: Rate limiting 적용
+- **이메일 제출**: Rate limiting 적용 (Upstash Redis)
 - **Clerk 웹훅**: 사용자 생성/삭제 자동 동기화
 - **Google Drive 연동**: OAuth 인증 및 파일 목록 조회
 - **이메일 알림**: 대기자에게 계정 생성 알림 발송
 - **Vercel API 연동**: 배포 상태 확인
+- **에러 처리**: Sentry를 통한 에러 추적 및 로깅
+- **환경변수 검증**: 필수 환경변수 자동 검증
 
 ## 📁 프로젝트 구조
 
@@ -164,32 +169,71 @@ addcow/
 │   │   ├── admin/                # 관리자 전용 컴포넌트
 │   │   │   ├── AdminLayout.tsx  # 관리자 레이아웃
 │   │   │   ├── AdminHeader.tsx  # 관리자 헤더
+│   │   │   ├── AdminSection.tsx # 관리자 섹션 래퍼
 │   │   │   ├── StatsCards.tsx  # 통계 카드
 │   │   │   ├── SubmissionsChart.tsx  # 제출 차트
 │   │   │   ├── SubmissionsTable.tsx # 제출 테이블
+│   │   │   ├── RecentSubmissions.tsx # 최근 제출 내역
 │   │   │   ├── UsersTable.tsx   # 사용자 테이블
-│   │   │   └── ExportButton.tsx # 내보내기 버튼
+│   │   │   ├── AddUserForm.tsx  # 사용자 추가 폼
+│   │   │   ├── ManageTabs.tsx   # 관리 탭 (제출/사용자)
+│   │   │   ├── ExportButton.tsx # 내보내기 버튼
+│   │   │   ├── SiteModeToggle.tsx # 사이트 모드 토글
+│   │   │   └── DockSettingsSection.tsx # Dock 설정 섹션
 │   │   ├── mvp/                  # MVP 모드 컴포넌트
 │   │   │   ├── ContactForm.tsx  # 연락처 폼
 │   │   │   ├── FeatureDemo.tsx  # 기능 소개
 │   │   │   ├── Pricing.tsx       # 가격 정보
 │   │   │   ├── ProductInfo.tsx  # 제품 정보
 │   │   │   └── UserRegistration.tsx  # 사용자 등록
+│   │   ├── common/               # 공통 컴포넌트
+│   │   │   ├── ErrorBoundary.tsx # 에러 바운더리
+│   │   │   └── LoadingSpinner.tsx # 로딩 스피너
+│   │   ├── react-bits/           # 애니메이션 컴포넌트
+│   │   │   ├── AnimatedGradient.tsx # 애니메이션 그라디언트
+│   │   │   ├── FadeIn.tsx        # 페이드인 애니메이션
+│   │   │   ├── LiquidEther.tsx  # 액체 이더 효과
+│   │   │   ├── Orb.tsx           # Orb 3D 효과
+│   │   │   ├── Particles.tsx    # 파티클 효과
+│   │   │   ├── SlideUp.tsx      # 슬라이드업 애니메이션
+│   │   │   └── SplitText.tsx    # 텍스트 분할 애니메이션
+│   │   ├── auth/                 # 인증 관련 컴포넌트
+│   │   │   └── AuthPageLayout.tsx # 인증 페이지 레이아웃
+│   │   ├── settings/             # 설정 페이지 컴포넌트
+│   │   │   ├── SettingSection.tsx # 설정 섹션 래퍼
+│   │   │   ├── ProfileSection.tsx # 프로필 설정
+│   │   │   ├── DockSettingsSection.tsx # Dock 설정
+│   │   │   ├── CommunicationSettingsSection.tsx # 통신 설정
+│   │   │   └── GoogleDriveSection.tsx # Google Drive 설정
+│   │   ├── upload/               # 파일 업로드 컴포넌트
+│   │   │   ├── FileUpload.tsx    # 파일 업로드
+│   │   │   └── GoogleDriveFiles.tsx # Google Drive 파일 목록
+│   │   ├── profile/              # 프로필 컴포넌트
+│   │   │   └── ProfileMenu.tsx   # 프로필 메뉴
 │   │   ├── EmailCollector.tsx   # 이메일 수집 컴포넌트
 │   │   ├── HeroSection.tsx      # 히어로 섹션
 │   │   ├── HomeClient.tsx        # 홈 클라이언트 컴포넌트
 │   │   ├── Dock.tsx              # Dock UI 컴포넌트
+│   │   ├── DockSettings.tsx      # Dock 설정 컴포넌트
 │   │   ├── GlobalDock.tsx       # 전역 Dock
-│   │   ├── ProfileMenu.tsx      # 프로필 메뉴
+│   │   ├── GlobalDockWrapper.tsx # 전역 Dock 래퍼
+│   │   ├── ProfileMenu.tsx      # 프로필 메뉴 (레거시)
+│   │   ├── GradientText.tsx      # 그라디언트 텍스트
+│   │   ├── PageTransition.tsx    # 페이지 전환 애니메이션
 │   │   └── ToastProvider.tsx    # Toast 알림 제공자
 │   ├── lib/                      # 유틸리티 및 설정
 │   │   ├── supabase/             # Supabase 클라이언트
 │   │   │   ├── client.ts        # 브라우저 클라이언트
 │   │   │   ├── server.ts        # 서버 클라이언트
 │   │   │   └── clerk-client.ts  # Clerk 통합 클라이언트
+│   │   ├── webhooks/             # 웹훅 유틸리티
+│   │   │   └── notifications.ts  # 웹훅 알림 처리
 │   │   ├── clerk.ts              # Clerk 헬퍼 함수
 │   │   ├── analytics.ts          # GA4/GTM 헬퍼
+│   │   ├── constants.ts          # 앱 전체 상수 정의
 │   │   ├── email.ts              # 이메일 발송 유틸리티
+│   │   ├── env.ts                # 환경변수 검증
+│   │   ├── errors.ts             # 에러 처리 유틸리티
 │   │   ├── google-drive.ts      # Google Drive API
 │   │   ├── ratelimit.ts          # Rate limiting
 │   │   ├── site-settings.ts      # 사이트 설정 관리
@@ -720,6 +764,11 @@ https://your-domain.com/api/webhooks/clerk
 
 **해결**: 이미 수정됨. `AdminLayout` 컴포넌트에서 스크롤 허용 처리됨.
 
+#### 5. Google 로그인 후 리다이렉트 깜빡임
+**증상**: Google 로그인 후 중간 페이지가 보였다가 사라짐
+
+**해결**: 이미 수정됨. SSO 콜백 후 바로 `/home`으로 리다이렉트하도록 수정됨.
+
 ### 로그 확인
 
 - **개발 환경**: 브라우저 콘솔 및 터미널 로그
@@ -778,6 +827,10 @@ pnpm test:vercel
 - **스타일링**: Tailwind CSS 사용
 - **아이콘**: 일반적인 아이콘은 `react-icons/lu` 사용
 - **다크모드**: 모든 디자인은 다크/화이트 모드 대응
+- **애니메이션**: motion 라이브러리 사용 (framer-motion 대체)
+- **에러 처리**: ErrorBoundary를 통한 컴포넌트 레벨 에러 처리
+- **로딩 상태**: LoadingSpinner 컴포넌트로 일관된 로딩 UI 제공
+- **상수 관리**: `lib/constants.ts`에서 앱 전체 상수 중앙 관리
 
 ## 📄 라이선스
 
