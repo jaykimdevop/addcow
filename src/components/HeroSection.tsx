@@ -52,7 +52,7 @@ export function HeroSection({ showContent = true }: HeroSectionProps) {
             </h1>
           </div>
 
-          <div className="mt-4 min-h-[80px] flex items-start justify-center">
+          <div className="mt-0 md:mt-4 min-h-[80px] flex items-start justify-center">
             <FadeIn delay={0.8} duration={0.6}>
               <div className="pointer-events-auto">
                 <EmailCollector />
