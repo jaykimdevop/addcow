@@ -8,6 +8,7 @@ import {
   LuLoader,
   LuShield,
   LuTrash2,
+  LuUserPlus,
 } from "react-icons/lu";
 
 interface ClerkUserInfo {

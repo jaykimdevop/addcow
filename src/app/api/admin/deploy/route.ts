@@ -1,4 +1,4 @@
-import { requireAdmin } from "@/lib/clerk";
+import { requireAdminAuth } from "@/lib/clerk";
 import { deployFromGitHub, getDeployments } from "@/lib/vercel";
 import { NextResponse } from "next/server";
 
@@ -9,7 +9,7 @@ import { NextResponse } from "next/server";
  */
 export async function POST() {
   try {
-    await requireAdmin();
+    await requireAdminAuth();
 
     // GitHub에서 최신 코드로 배포
     const deployment = await deployFromGitHub({
@@ -56,7 +56,7 @@ export async function POST() {
  */
 export async function GET() {
   try {
-    await requireAdmin();
+    await requireAdminAuth();
 
     const { deployments } = await getDeployments({ limit: 5 });
 

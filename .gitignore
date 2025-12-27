@@ -52,3 +52,5 @@ next-env.d.ts
 # lock files - use pnpm-lock.yaml only
 package-lock.json
 yarn.lock
+
+.vercel
