@@ -77,10 +77,22 @@ export async function GET(request: NextRequest) {
         });
       }
     } else if (type === "users") {
-      const { data: adminUsers, error } = await supabase
+      const startDate = searchParams.get("start");
+      const endDate = searchParams.get("end");
+
+      let query = supabase
         .from("admin_users")
         .select("*")
         .order("created_at", { ascending: false });
+
+      if (startDate) {
+        query = query.gte("created_at", `${startDate}T00:00:00.000Z`);
+      }
+      if (endDate) {
+        query = query.lte("created_at", `${endDate}T23:59:59.999Z`);
+      }
+
+      const { data: adminUsers, error } = await query;
 
       if (error) {
         console.error("Database error:", error);
@@ -111,6 +123,10 @@ export async function GET(request: NextRequest) {
         format(new Date(user.created_at), "yyyy-MM-dd HH:mm:ss"),
       ]);
 
+      const filenameDatePart = startDate && endDate 
+        ? `${startDate}-to-${endDate}` 
+        : format(new Date(), "yyyy-MM-dd");
+
       if (exportFormat === "excel") {
         const worksheet = XLSX.utils.aoa_to_sheet([headers, ...rows]);
         const workbook = XLSX.utils.book_new();
@@ -124,7 +140,7 @@ export async function GET(request: NextRequest) {
           headers: {
             "Content-Type":
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-            "Content-Disposition": `attachment; filename="users-${format(new Date(), "yyyy-MM-dd")}.xlsx"`,
+            "Content-Disposition": `attachment; filename="users-${filenameDatePart}.xlsx"`,
           },
         });
       } else {
@@ -139,7 +155,7 @@ export async function GET(request: NextRequest) {
         return new NextResponse(csvContent, {
           headers: {
             "Content-Type": "text/csv",
-            "Content-Disposition": `attachment; filename="users-${format(new Date(), "yyyy-MM-dd")}.csv"`,
+            "Content-Disposition": `attachment; filename="users-${filenameDatePart}.csv"`,
           },
         });
       }

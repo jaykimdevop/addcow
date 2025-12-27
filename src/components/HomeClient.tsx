@@ -33,7 +33,7 @@ export function HomeClient() {
     return () => window.removeEventListener('resize', updateMobile);
   }, []);
 
-  const orbScale = isMobile ? 1.0 : 0.7;
+  const orbScale = isMobile ? 1.0 : 0.8;
 
   // 로그인 시 Orb 애니메이션 트리거
   useEffect(() => {

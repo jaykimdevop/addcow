@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import {
@@ -187,7 +188,7 @@ export function UsersTable({ users: initialUsers }: UsersTableProps) {
                         </span>
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap text-xs text-neutral-400">
-                        {format(new Date(user.created_at), "MMM d, yyyy")}
+                        {format(new Date(user.created_at), "yyyy.MM.dd", { locale: ko })}
                       </td>
                       <td className="px-3 py-2 whitespace-nowrap">
                         <button

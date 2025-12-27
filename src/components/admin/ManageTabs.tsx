@@ -40,34 +40,37 @@ export function ManageTabs({
         <div className="flex gap-2">
           <Link
             href={getTabUrl("submissions")}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+            className={`px-3 md:px-4 py-2 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${
               currentTab === "submissions"
                 ? "border-purple-500 text-purple-400"
                 : "border-transparent text-neutral-400 hover:text-neutral-300"
             }`}
           >
-            제출 관리
+            <span className="hidden md:inline">제출 관리</span>
+            <span className="md:hidden">제출</span>
           </Link>
           <Link
             href={getTabUrl("users")}
-            className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+            className={`px-3 md:px-4 py-2 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${
               currentTab === "users"
                 ? "border-purple-500 text-purple-400"
                 : "border-transparent text-neutral-400 hover:text-neutral-300"
             }`}
           >
-            사용자 관리
+            <span className="hidden md:inline">사용자 관리</span>
+            <span className="md:hidden">사용자</span>
           </Link>
           {addUser && (
             <Link
               href={getTabUrl("add")}
-              className={`px-4 py-2 text-sm font-medium transition-colors border-b-2 ${
+              className={`px-3 md:px-4 py-2 text-sm font-medium transition-colors border-b-2 whitespace-nowrap ${
                 currentTab === "add"
                   ? "border-purple-500 text-purple-400"
                   : "border-transparent text-neutral-400 hover:text-neutral-300"
               }`}
             >
-              새 관리자 추가
+              <span className="hidden md:inline">새 관리자 추가</span>
+              <span className="md:hidden">관리자</span>
             </Link>
           )}
         </div>

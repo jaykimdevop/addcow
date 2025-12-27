@@ -3,8 +3,6 @@ import { AdminLayout } from "@/components/admin/AdminLayout";
 import { AdminSection } from "@/components/admin/AdminSection";
 import { DockSettingsSection } from "@/components/admin/DockSettingsSection";
 import { SiteModeToggle } from "@/components/admin/SiteModeToggle";
-import { VercelApiTest } from "@/components/admin/VercelApiTest";
-import { LuSettings, LuServer } from "react-icons/lu";
 import { getSiteMode } from "@/lib/site-settings";
 import { createServiceClient } from "@/lib/supabase/server";
 import { requireAuth } from "@/lib/clerk";
@@ -34,17 +32,8 @@ export default async function SettingsPage() {
           <SiteModeToggle currentMode={currentMode} />
         </AdminSection>
 
-        <AdminSection
-          title="Vercel API 테스트"
-          description="Vercel API 연결 상태를 확인합니다"
-          icon={<LuServer size={14} />}
-          delay={0.05}
-        >
-          <VercelApiTest />
-        </AdminSection>
-
         {adminUser?.role === "admin" && (
-          <DockSettingsSection delay={0.1} />
+          <DockSettingsSection delay={0.05} />
         )}
       </div>
     </AdminLayout>

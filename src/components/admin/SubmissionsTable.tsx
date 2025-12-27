@@ -1,6 +1,7 @@
 "use client";
 
 import { format } from "date-fns";
+import { ko } from "date-fns/locale";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
   LuChevronLeft,
@@ -84,7 +85,8 @@ export function SubmissionsTable({
                     <td className="px-3 py-2 whitespace-nowrap text-xs text-neutral-400">
                       {format(
                         new Date(submission.created_at),
-                        "MMM d, yyyy HH:mm",
+                        "yyyy.MM.dd HH:mm",
+                        { locale: ko }
                       )}
                     </td>
                     <td className="px-3 py-2 whitespace-nowrap text-xs text-neutral-400 font-mono">
