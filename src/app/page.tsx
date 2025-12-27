@@ -5,24 +5,21 @@ import { checkIsAdmin } from "@/lib/clerk";
 import { getSiteMode } from "@/lib/site-settings";
 
 export default async function Home() {
-  const siteMode = await getSiteMode();
-
-  // MVP 모드일 때는 /addcow로 리다이렉트
-  if (siteMode === "mvp") {
-    redirect("/addcow");
-  }
-
-  // 로그인 상태 확인
-  const user = await currentUser();
+  // 병렬로 데이터 가져오기
+  const [siteMode, user] = await Promise.all([
+    getSiteMode(),
+    currentUser(),
+  ]);
 
   // 로그인되어 있으면 /home으로 리다이렉트
   if (user) {
     redirect("/home");
   }
 
-  // 관리자인지 확인
+  // 로그인하지 않은 사용자만 adminInfo 확인
   const adminInfo = await checkIsAdmin();
 
-  // 로그인하지 않은 사용자: 마케팅/이메일 수집 페이지
-  return <HomeClient isAdmin={adminInfo?.isAdmin || false} />;
+  // 로그인하지 않은 사용자: Orb 디자인의 마케팅 페이지
+  // FD 모드: 대기자 등록 폼, MVP 모드: 로그인 버튼
+  return <HomeClient isAdmin={adminInfo?.isAdmin || false} siteMode={siteMode} />;
 }

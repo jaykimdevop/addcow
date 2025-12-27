@@ -3,6 +3,14 @@ import { LuLogIn } from "react-icons/lu";
 import { AuthPageLayout } from "@/components/auth/AuthPageLayout";
 
 export default function SignInPage() {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    console.error(
+      "[SignInPage] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set",
+    );
+  }
+
   return (
     <AuthPageLayout
       icon={LuLogIn}
@@ -20,7 +28,6 @@ export default function SignInPage() {
         path="/sign-in"
         signUpUrl="/sign-up"
         fallbackRedirectUrl="/admin"
-        forceRedirectUrl="/admin"
       />
     </AuthPageLayout>
   );

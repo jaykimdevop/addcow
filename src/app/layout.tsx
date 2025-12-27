@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import Script from "next/script";
 import "./globals.css";
-import { GlobalDock } from "@/components/GlobalDock";
+import { GlobalDockWrapper } from "@/components/GlobalDockWrapper";
 import { ToastProvider } from "@/components/ToastProvider";
 import { GA4_MEASUREMENT_ID, GTM_CONTAINER_ID } from "@/lib/analytics";
 
@@ -28,8 +28,17 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const publishableKey = process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY;
+
+  if (!publishableKey) {
+    console.error(
+      "[ClerkProvider] NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not set",
+    );
+  }
+
   return (
     <ClerkProvider
+      publishableKey={publishableKey}
       localization={koKR}
       appearance={{
         layout: {
@@ -103,7 +112,7 @@ export default function RootLayout({
             </noscript>
           )}
           {children}
-          <GlobalDock />
+          <GlobalDockWrapper />
           <ToastProvider />
         </body>
       </html>

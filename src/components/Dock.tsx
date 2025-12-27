@@ -35,6 +35,8 @@ export type DockProps = {
   dockHeight?: number;
   magnification?: number;
   spring?: SpringOptions;
+  backgroundColor?: string;
+  isMobile?: boolean;
 };
 
 type DockItemProps = {
@@ -95,7 +97,7 @@ function DockItem({
       onFocus={() => isHovered.set(1)}
       onBlur={() => isHovered.set(0)}
       onClick={handleClick}
-      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border-2 shadow-md cursor-pointer pointer-events-auto ${
+      className={`relative inline-flex items-center justify-center rounded-full bg-[#060010] border shadow-md cursor-pointer pointer-events-auto ${
         isActive ? "border-purple-500" : "border-neutral-700"
       } ${className}`}
       tabIndex={0}
@@ -158,7 +160,7 @@ type DockIconProps = {
 
 function DockIcon({ children, className = "" }: DockIconProps) {
   return (
-    <div className={`flex items-center justify-center ${className}`}>
+    <div className={`flex items-center justify-center text-white ${className}`}>
       {children}
     </div>
   );
@@ -173,15 +175,22 @@ export default function Dock({
   panelHeight = 64,
   dockHeight = 256,
   baseItemSize = 50,
+  backgroundColor,
+  isMobile = false,
 }: DockProps) {
   const mouseX = useMotionValue(Infinity);
   const isHovered = useMotionValue(0);
 
   const maxHeight = useMemo(
     () => Math.max(dockHeight, magnification + magnification / 2 + 4),
-    [magnification],
+    [magnification, dockHeight],
   );
-  const heightRow = useTransform(isHovered, [0, 1], [panelHeight, maxHeight]);
+  // 모바일에서는 높이 변경 비활성화
+  const heightRow = useTransform(
+    isHovered,
+    [0, 1],
+    [panelHeight, isMobile ? panelHeight : maxHeight],
+  );
   const height = useSpring(heightRow, spring);
 
   return (
@@ -198,8 +207,11 @@ export default function Dock({
           isHovered.set(0);
           mouseX.set(Infinity);
         }}
-        className="flex items-end w-fit gap-4 rounded-2xl border-neutral-700 border-2 pb-2 px-4 pointer-events-auto"
-        style={{ height: panelHeight }}
+        className="flex items-end w-fit gap-4 rounded-2xl border-neutral-700 border pb-2 px-4 pointer-events-auto"
+        style={{
+          height: panelHeight,
+          backgroundColor: backgroundColor || undefined,
+        }}
         role="toolbar"
         aria-label="Application dock"
       >

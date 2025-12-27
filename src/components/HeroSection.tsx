@@ -4,17 +4,19 @@ import { useUser } from "@clerk/nextjs";
 import { LuSparkles } from "react-icons/lu";
 import { EmailCollector } from "@/components/EmailCollector";
 import { FadeIn, SplitText } from "@/components/react-bits";
+import type { SiteMode } from "@/lib/site-settings";
 
 interface HeroSectionProps {
   isAdmin: boolean;
   showContent?: boolean;
+  siteMode: SiteMode;
 }
 
-export function HeroSection({ isAdmin, showContent = true }: HeroSectionProps) {
+export function HeroSection({ isAdmin, showContent = true, siteMode }: HeroSectionProps) {
   const { isSignedIn, isLoaded } = useUser();
 
   return (
-    <div className="relative z-10 pointer-events-none h-full flex flex-col items-center justify-center -mt-4">
+    <div className="relative z-10 pointer-events-none h-full flex flex-col items-center justify-center">
       {/* 로그인하지 않은 사용자 화면 */}
       {isLoaded && !isSignedIn && showContent && (
         <>
@@ -37,28 +39,26 @@ export function HeroSection({ isAdmin, showContent = true }: HeroSectionProps) {
                 </div>
               </div>
             </FadeIn>
-            <h1 className="text-xl md:text-2xl text-gray-900 dark:text-gray-100 mb-2 leading-relaxed min-h-[120px] flex flex-col justify-center">
+            <h1 className="text-lg md:text-2xl text-white mb-2 leading-relaxed min-h-[120px] flex flex-col justify-center">
               <SplitText
                 text="24시간 전문가 지식베이스로 수행되는"
                 delay={0.2}
                 duration={0.5}
                 className="block font-light"
               />
-              <span className="text-white dark:text-white block">
-                <SplitText
-                  text="지식기반 자동화 마케팅을 경험해보세요"
-                  delay={0.5}
-                  duration={0.5}
-                  className="font-medium"
-                />
-              </span>
+              <SplitText
+                text="지식기반 자동화 마케팅을 경험해보세요"
+                delay={0.5}
+                duration={0.5}
+                className="block font-medium"
+              />
             </h1>
           </div>
 
           <div className="mt-4 min-h-[80px] flex items-start justify-center">
             <FadeIn delay={0.8} duration={0.6}>
               <div className="pointer-events-auto">
-                <EmailCollector />
+                <EmailCollector siteMode={siteMode} />
               </div>
             </FadeIn>
           </div>

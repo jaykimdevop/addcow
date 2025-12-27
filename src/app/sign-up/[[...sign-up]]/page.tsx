@@ -20,7 +20,6 @@ export default function SignUpPage() {
         path="/sign-up"
         signInUrl="/sign-in"
         fallbackRedirectUrl="/admin"
-        forceRedirectUrl="/admin"
       />
     </AuthPageLayout>
   );

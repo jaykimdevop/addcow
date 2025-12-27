@@ -2,20 +2,44 @@
 
 import { useUser } from "@clerk/nextjs";
 import { AnimatePresence, motion } from "motion/react";
+import dynamic from "next/dynamic";
 import { useEffect, useRef, useState } from "react";
 import { HeroSection } from "@/components/HeroSection";
-import { Orb } from "@/components/react-bits";
+import type { SiteMode } from "@/lib/site-settings";
+
+// Orb 컴포넌트를 dynamic import로 최적화 (WebGL ~50KB)
+const Orb = dynamic(() => import("@/components/react-bits").then((mod) => ({ default: mod.Orb })), {
+  ssr: false,
+  loading: () => (
+    <div className="w-96 h-96 animate-pulse bg-purple-500/10 rounded-full" />
+  ),
+});
 
 interface HomeClientProps {
   isAdmin: boolean;
+  siteMode: SiteMode;
 }
 
-export function HomeClient({ isAdmin }: HomeClientProps) {
+export function HomeClient({ isAdmin, siteMode }: HomeClientProps) {
   const { isSignedIn, isLoaded } = useUser();
   const [showOrb, setShowOrb] = useState(true);
   const [orbAnimating, setOrbAnimating] = useState(false);
   const [showContent, setShowContent] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
   const prevSignedInRef = useRef<boolean | null>(null);
+
+  // 반응형 감지
+  useEffect(() => {
+    const updateMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    updateMobile();
+    window.addEventListener('resize', updateMobile);
+    return () => window.removeEventListener('resize', updateMobile);
+  }, []);
+
+  const orbScale = isMobile ? 1.0 : 0.7;
 
   // 로그인 시 Orb 애니메이션 트리거
   useEffect(() => {
@@ -76,18 +100,20 @@ export function HomeClient({ isAdmin }: HomeClientProps) {
       <AnimatePresence>
         {showOrb && isLoaded && (!isSignedIn || orbAnimating) && (
           <motion.div
-            className="fixed inset-0 z-0 w-full h-full"
-            initial={{ scale: 1, opacity: 1 }}
+            className="fixed inset-0 z-0 flex items-center justify-center"
+            initial={{ scale: orbScale, opacity: 1, y: '-8vh' }}
             animate={
               orbAnimating
                 ? {
-                    scale: 3,
+                    scale: orbScale * 3,
                     opacity: 0,
                     rotate: 360,
+                    y: '-8vh',
                   }
                 : {
-                    scale: 1,
+                    scale: orbScale,
                     opacity: 1,
+                    y: '-8vh',
                   }
             }
             exit={{ opacity: 0 }}
@@ -105,7 +131,7 @@ export function HomeClient({ isAdmin }: HomeClientProps) {
           </motion.div>
         )}
       </AnimatePresence>
-      <HeroSection isAdmin={isAdmin} showContent={showContent} />
+      <HeroSection isAdmin={isAdmin} showContent={showContent} siteMode={siteMode} />
     </div>
   );
 }

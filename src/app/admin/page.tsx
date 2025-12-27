@@ -8,50 +8,49 @@ import { createServiceClient } from "@/lib/supabase/server";
 export default async function AdminDashboard() {
   const supabase = await createServiceClient();
 
-  // Get total count
-  const { count: totalCount } = await supabase
-    .from("submissions")
-    .select("*", { count: "exact", head: true });
-
-  // Get today's count
+  // 날짜 계산
   const today = new Date();
   today.setHours(0, 0, 0, 0);
-  const { count: todayCount } = await supabase
-    .from("submissions")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", today.toISOString());
-
-  // Get this week's count
   const weekAgo = new Date();
   weekAgo.setDate(weekAgo.getDate() - 7);
-  const { count: weekCount } = await supabase
-    .from("submissions")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", weekAgo.toISOString());
-
-  // Get this month's count
   const monthAgo = new Date();
   monthAgo.setMonth(monthAgo.getMonth() - 1);
-  const { count: monthCount } = await supabase
-    .from("submissions")
-    .select("*", { count: "exact", head: true })
-    .gte("created_at", monthAgo.toISOString());
-
-  // Get recent submissions
-  const { data: recentSubmissions } = await supabase
-    .from("submissions")
-    .select("*")
-    .order("created_at", { ascending: false })
-    .limit(10);
-
-  // Get submissions for chart (last 30 days)
   const thirtyDaysAgo = new Date();
   thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const { data: chartData } = await supabase
-    .from("submissions")
-    .select("created_at")
-    .gte("created_at", thirtyDaysAgo.toISOString())
-    .order("created_at", { ascending: true });
+
+  // 모든 쿼리를 병렬로 실행
+  const [
+    { count: totalCount },
+    { count: todayCount },
+    { count: weekCount },
+    { count: monthCount },
+    { data: recentSubmissions },
+    { data: chartData },
+  ] = await Promise.all([
+    supabase.from("submissions").select("*", { count: "exact", head: true }),
+    supabase
+      .from("submissions")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", today.toISOString()),
+    supabase
+      .from("submissions")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", weekAgo.toISOString()),
+    supabase
+      .from("submissions")
+      .select("*", { count: "exact", head: true })
+      .gte("created_at", monthAgo.toISOString()),
+    supabase
+      .from("submissions")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(10),
+    supabase
+      .from("submissions")
+      .select("created_at")
+      .gte("created_at", thirtyDaysAgo.toISOString())
+      .order("created_at", { ascending: true }),
+  ]);
 
   return (
     <AdminLayout>

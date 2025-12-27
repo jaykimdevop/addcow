@@ -4,7 +4,6 @@ import { useUser } from "@clerk/nextjs";
 import { motion } from "motion/react";
 import { useRouter } from "next/navigation";
 import { CommunicationSettingsSection } from "@/components/settings/CommunicationSettingsSection";
-import { DockSettingsSection } from "@/components/settings/DockSettingsSection";
 import { GoogleDriveSection } from "@/components/settings/GoogleDriveSection";
 import { ProfileSection } from "@/components/settings/ProfileSection";
 
@@ -42,16 +41,15 @@ export default function SettingsPage() {
         >
           <h1 className="text-xl font-bold">설정</h1>
           <p className="text-xs text-neutral-400 mt-1">
-            계정 및 Dock 설정을 관리하세요
+            계정 및 연동 설정을 관리하세요
           </p>
         </motion.div>
 
         {/* Settings Sections */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 auto-rows-min">
           <ProfileSection />
-          <DockSettingsSection delay={0.05} />
-          <GoogleDriveSection delay={0.1} />
-          <CommunicationSettingsSection delay={0.15} />
+          <GoogleDriveSection delay={0.05} />
+          <CommunicationSettingsSection delay={0.1} />
         </div>
       </div>
     </div>
