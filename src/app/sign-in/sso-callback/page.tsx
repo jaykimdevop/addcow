@@ -22,7 +22,7 @@ export default function SSOCallbackPage() {
         />
         <p className="text-white text-sm opacity-70">로그인 중...</p>
       </motion.div>
-      <AuthenticateWithRedirectCallback />
+      <AuthenticateWithRedirectCallback redirectUrl="/home" />
       <div id="clerk-captcha" />
     </div>
   );

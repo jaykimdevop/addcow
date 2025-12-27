@@ -64,7 +64,7 @@ export function EmailCollector() {
       await signIn.authenticateWithRedirect({
         strategy: "oauth_google",
         redirectUrl: window.location.origin + "/sign-in/sso-callback",
-        redirectUrlComplete: window.location.origin + "/",
+        redirectUrlComplete: window.location.origin + "/home",
       });
     } catch (err) {
       console.error("Failed to initiate Google sign-in:", err);
